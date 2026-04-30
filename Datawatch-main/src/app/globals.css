@@ -1,0 +1,231 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fafafa;
+  --foreground: #0a0a0a;
+  --surface: #ffffff;
+  --muted: #6b7280;
+  --primary: #008751;
+  --primary-dark: #005c35;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: Inter, Arial, Helvetica, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.dark {
+  --background: #020617;
+  --foreground: #e2e8f0;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  outline-color: #2563eb;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: rgba(0, 135, 81, 0.18);
+  color: var(--foreground);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.72;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes hero-slide-one {
+  0%,
+  26% {
+    opacity: 1;
+  }
+
+  32%,
+  94% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-slide-two {
+  0%,
+  26%,
+  62%,
+  100% {
+    opacity: 0;
+  }
+
+  32%,
+  56% {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-slide-three {
+  0%,
+  56%,
+  100% {
+    opacity: 0;
+  }
+
+  62%,
+  94% {
+    opacity: 1;
+  }
+}
+
+@keyframes network-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes live-message-cycle {
+  0%,
+  16% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  20%,
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.live-pulse {
+  animation: soft-pulse 1.8s ease-in-out infinite;
+}
+
+.hero-slide {
+  opacity: 0;
+  transition: opacity 1200ms ease;
+}
+
+.hero-slide-1 {
+  opacity: 1;
+  animation: hero-slide-one 12s ease-in-out infinite;
+}
+
+.hero-slide-2 {
+  animation: hero-slide-two 12s ease-in-out infinite;
+}
+
+.hero-slide-3 {
+  animation: hero-slide-three 12s ease-in-out infinite;
+}
+
+.network-marquee {
+  animation: network-marquee 14s linear infinite;
+}
+
+.live-message-pill {
+  display: flex;
+  align-items: center;
+}
+
+.live-message-text {
+  position: relative;
+  display: inline-block;
+  min-height: 1rem;
+  flex: 1;
+  overflow: hidden;
+}
+
+.live-message {
+  position: absolute;
+  inset: 0 auto auto 0;
+  opacity: 0;
+  white-space: nowrap;
+  animation: live-message-cycle 15s ease-in-out infinite;
+}
+
+.live-message-1 {
+  animation-delay: 0s;
+}
+
+.live-message-2 {
+  animation-delay: 3s;
+}
+
+.live-message-3 {
+  animation-delay: 6s;
+}
+
+.live-message-4 {
+  animation-delay: 9s;
+}
+
+.live-message-5 {
+  animation-delay: 12s;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

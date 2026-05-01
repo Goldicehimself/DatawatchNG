@@ -22,7 +22,17 @@ type AppState = {
   alertStates: Record<string, AlertState>;
   cancelledSubscriptions: string[];
   watcherMessages: ChatMessage[];
-  setSession: (token: string, phoneNumber: string, networkProvider: string) => void;
+  setSession: (
+    token: string,
+    phoneNumber: string,
+    networkProvider: string,
+    settings?: {
+      aiLanguage?: "english" | "pidgin";
+      notifications?: {
+        fraudAlerts?: boolean;
+      };
+    },
+  ) => void;
   completeVerification: (phoneNumber: string, networkProvider: string) => void;
   activateLine: () => void;
   toggleDemoMode: () => void;
@@ -56,7 +66,7 @@ export const useAppStore = create<AppState>()(
       alertStates: {},
       cancelledSubscriptions: [],
       watcherMessages: initialWatcherMessages,
-      setSession: (token, phoneNumber, networkProvider) =>
+      setSession: (token, phoneNumber, networkProvider, settings) =>
         set({
           token,
           phoneNumber,
@@ -64,6 +74,11 @@ export const useAppStore = create<AppState>()(
           isVerified: true,
           isActivated: true,
           demoMode: false,
+          fraudProtection: settings?.notifications?.fraudAlerts ?? true,
+          pidginResponses: settings?.aiLanguage === "pidgin",
+          alertStates: {},
+          cancelledSubscriptions: [],
+          watcherMessages: initialWatcherMessages,
         }),
       completeVerification: (phoneNumber, networkProvider) =>
         set({
@@ -102,6 +117,10 @@ export const useAppStore = create<AppState>()(
           isVerified: false,
           isActivated: false,
           demoMode: false,
+          fraudProtection: true,
+          pidginResponses: false,
+          alertStates: {},
+          cancelledSubscriptions: [],
           watcherMessages: initialWatcherMessages,
         }),
     }),

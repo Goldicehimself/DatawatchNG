@@ -21,7 +21,12 @@ export default function DemoPage() {
 
     try {
       const response = await startDemo("MTN");
-      setSession(response.token, response.user.phone, response.user.network);
+      setSession(
+        response.token,
+        response.user.phone,
+        response.user.network,
+        response.user.settings,
+      );
       router.push("/dashboard");
     } finally {
       setLoading(false);

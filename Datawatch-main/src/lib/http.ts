@@ -18,3 +18,21 @@ http.interceptors.request.use((config) => {
 
   return config;
 });
+
+http.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (axios.isAxiosError(error)) {
+      const message =
+        typeof error.response?.data === "object" &&
+        error.response?.data &&
+        "message" in error.response.data
+          ? String(error.response.data.message)
+          : error.message;
+
+      return Promise.reject(new Error(message));
+    }
+
+    return Promise.reject(error);
+  },
+);

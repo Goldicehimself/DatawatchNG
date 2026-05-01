@@ -149,7 +149,12 @@ export function PhoneAuth() {
 
     try {
       const response = await verifyOtp(phone, code, network || "MTN", mode);
-      setSession(response.token, response.user.phone, response.user.network);
+      setSession(
+        response.token,
+        response.user.phone,
+        response.user.network,
+        response.user.settings,
+      );
       setStep("success");
       setTimeout(() => router.push("/dashboard"), 700);
     } catch (verifyError) {
@@ -270,7 +275,7 @@ export function PhoneAuth() {
               >
                 Phone
               </label>
-              <div className="relative mt-3">
+              <div className="mt-3">
                 <div
                   className={cn(
                     "flex h-14 items-center gap-3 rounded-[16px] border bg-white px-4 transition focus-within:border-[#008751] focus-within:ring-4 focus-within:ring-[#008751]/10",
@@ -296,17 +301,17 @@ export function PhoneAuth() {
                     className="min-w-0 flex-1 bg-transparent text-base font-semibold tracking-wide outline-none"
                     placeholder="08025341245"
                   />
+                  {network ? (
+                    <span
+                      className={cn(
+                        "shrink-0 rounded-full px-3 py-1.5 text-xs font-black shadow-[0_8px_18px_rgba(15,23,42,0.10)]",
+                        networkStyles[network],
+                      )}
+                    >
+                      {network}
+                    </span>
+                  ) : null}
                 </div>
-                {network ? (
-                  <span
-                    className={cn(
-                      "absolute top-1/2 -right-4 -translate-y-1/2 rounded-full px-3 py-1.5 text-xs font-black lowercase shadow-[0_10px_22px_rgba(15,23,42,0.12)]",
-                      networkStyles[network],
-                    )}
-                  >
-                    {network}
-                  </span>
-                ) : null}
               </div>
               {network ? (
                 <p className="mt-3 text-sm font-bold text-[#008751]">

@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { requestOtp, verifyOtp } from "@/lib/api";
@@ -97,16 +97,19 @@ function toBackendPhone(localPhone: string) {
 
 export function PhoneAuth() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const setSession = useAppStore((state) => state.setSession);
   const logout = useAppStore((state) => state.logout);
+  const initialMode = searchParams.get("mode") === "signin" ? "signin" : "create";
   const [fullName, setFullName] = useState("");
   const [localPhone, setLocalPhone] = useState("");
-  const [mode, setMode] = useState<"create" | "signin">("create");
+  const [mode, setMode] = useState<"create" | "signin">(initialMode);
   const [step, setStep] = useState<"phone" | "otp" | "success">("phone");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [seconds, setSeconds] = useState(42);
   const [demoCode, setDemoCode] = useState("");
   const [error, setError] = useState("");
+  const [accountNotFound, setAccountNotFound] = useState(false);
   const [loading, setLoading] = useState(false);
   const inputs = useRef<Array<HTMLInputElement | null>>([]);
 
@@ -118,6 +121,7 @@ export function PhoneAuth() {
   async function submitPhone() {
     setLoading(true);
     setError("");
+    setAccountNotFound(false);
 
     try {
       const response = await requestOtp(phone, mode);
@@ -125,11 +129,17 @@ export function PhoneAuth() {
       setSeconds(response.resendAfterSeconds || 60);
       setStep("otp");
     } catch (requestError) {
-      setError(
+      const message =
         requestError instanceof Error
           ? requestError.message
-          : "Unable to send OTP. Check the backend connection.",
+          : "Unable to send OTP. Check the backend connection.";
+
+      setAccountNotFound(
+        mode === "signin" &&
+          (message.toLowerCase().includes("no account found") ||
+            message.toLowerCase().includes("create an account")),
       );
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -141,6 +151,7 @@ export function PhoneAuth() {
     setStep("phone");
     setOtp(["", "", "", "", "", ""]);
     setError("");
+    setAccountNotFound(false);
   }
 
   async function submitOtp(code: string) {
@@ -155,6 +166,7 @@ export function PhoneAuth() {
         response.user.network,
         response.user.settings,
         response.user.isDemo,
+        fullName.trim(),
       );
       setStep("success");
       setTimeout(() => router.push("/dashboard"), 700);
@@ -295,9 +307,11 @@ export function PhoneAuth() {
                   <input
                     id="phone"
                     value={localPhone}
-                    onChange={(event) =>
-                      setLocalPhone(normalizeLocalPhone(event.target.value))
-                    }
+                    onChange={(event) => {
+                      setLocalPhone(normalizeLocalPhone(event.target.value));
+                      setError("");
+                      setAccountNotFound(false);
+                    }}
                     inputMode="tel"
                     className="min-w-0 flex-1 bg-transparent text-base font-semibold tracking-wide outline-none"
                     placeholder="08025341245"
@@ -334,9 +348,19 @@ export function PhoneAuth() {
             </Button>
 
             {error ? (
-              <p className="mt-4 text-center text-sm font-semibold text-red-600">
-                {error}
-              </p>
+              <div className="mt-4 rounded-[16px] bg-red-50 p-4 text-center">
+                <p className="text-sm font-semibold text-red-600">{error}</p>
+                {accountNotFound ? (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="mt-3 h-10 rounded-[12px] border-red-100 bg-white text-sm text-[#0A0A0A]"
+                    onClick={() => changeMode("create")}
+                  >
+                    Create account instead
+                  </Button>
+                ) : null}
+              </div>
             ) : null}
 
             <p className="mx-auto mt-6 max-w-sm text-center text-xs leading-6 text-[#6B7280]">

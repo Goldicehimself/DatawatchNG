@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { AppShell } from "@/components/layout/app-shell";
 import { ProductCard } from "@/components/product/product-card";
 import { Button, ButtonLink } from "@/components/ui/button";
+import { Skeleton, TextSkeleton } from "@/components/ui/skeleton";
 import { getChatHistory, sendAssistantMessage } from "@/lib/api";
 import { useAppStore, type ChatMessage } from "@/lib/app-store";
 
@@ -30,6 +31,7 @@ export function WatcherChat() {
       role: message.role,
       text: message.content,
     })) || storedMessages;
+  const loadingChat = Boolean(token) && chatQuery.isLoading;
 
   const sendMutation = useMutation({
     mutationFn: (message: string) =>
@@ -126,7 +128,21 @@ export function WatcherChat() {
         </div>
 
         <div className="flex-1 space-y-4 overflow-y-auto p-5">
-          {messages.map((message, index) => (
+          {loadingChat ? (
+            <>
+              <div className="max-w-[86%] rounded-[20px] bg-black/[0.04] p-4">
+                <TextSkeleton className="w-56" />
+                <TextSkeleton className="mt-3 w-40" />
+              </div>
+              <div className="ml-auto max-w-[76%] rounded-[20px] bg-[#008751]/15 p-4">
+                <TextSkeleton className="ml-auto w-44" />
+              </div>
+              <div className="max-w-[86%] rounded-[20px] bg-black/[0.04] p-4">
+                <TextSkeleton className="w-52" />
+                <TextSkeleton className="mt-3 w-48" />
+              </div>
+            </>
+          ) : messages.map((message, index) => (
             <div
               key={`${message.role}-${index}`}
               className={`max-w-[86%] rounded-[20px] p-4 text-sm leading-6 ${
@@ -164,7 +180,11 @@ export function WatcherChat() {
               placeholder="Ask about usage, charges, or savings"
             />
             <Button className="h-12 w-12 px-0" onClick={send} aria-label="Send">
-              <Send size={18} strokeWidth={1.5} />
+              {sendMutation.isPending ? (
+                <Skeleton className="h-4 w-4 rounded-full bg-white/40" />
+              ) : (
+                <Send size={18} strokeWidth={1.5} />
+              )}
             </Button>
           </div>
           {messages.length > 1 ? (

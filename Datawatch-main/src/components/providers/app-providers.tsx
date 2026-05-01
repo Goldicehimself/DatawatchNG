@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { type ReactNode, useState } from "react";
 import { PwaRegister } from "@/components/providers/pwa-register";
+import { RouteTransitionLoader } from "@/components/providers/route-transition-loader";
+import { SplashScreen } from "@/components/providers/splash-screen";
 
 type AppProvidersProps = {
   children: ReactNode;
@@ -26,6 +28,8 @@ export function AppProviders({ children }: AppProvidersProps) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <PwaRegister />
+      <SplashScreen />
+      <RouteTransitionLoader />
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </ThemeProvider>
   );

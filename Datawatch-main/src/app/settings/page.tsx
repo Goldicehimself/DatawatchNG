@@ -1,9 +1,10 @@
 "use client";
 
-import { Camera, ChevronRight, Shield, User, Wifi } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Bell, Camera, ChevronRight, Pencil, Shield, User, Wifi } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { AppShell } from "@/components/layout/app-shell";
 import { ProductCard } from "@/components/product/product-card";
 import { Button } from "@/components/ui/button";
@@ -24,7 +25,7 @@ function Toggle({
       aria-pressed={enabled}
       onClick={() => onChange(!enabled)}
       className={cn(
-        "flex h-9 w-16 items-center rounded-full p-1 transition",
+        "flex h-9 w-16 shrink-0 items-center rounded-full p-1 transition focus-visible:ring-4 focus-visible:ring-[#008751]/20 focus-visible:outline-none",
         enabled ? "bg-[#008751]" : "bg-black/[0.06]",
       )}
     >
@@ -38,9 +39,72 @@ function Toggle({
   );
 }
 
+function SettingsRow({
+  icon: Icon,
+  title,
+  subtitle,
+  trailing,
+}: {
+  icon: LucideIcon;
+  title: string;
+  subtitle?: string;
+  trailing?: React.ReactNode;
+}) {
+  return (
+    <div className="flex min-w-0 items-center gap-3 p-4">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[15px] bg-black/[0.04]">
+        <Icon size={20} strokeWidth={1.5} />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[15px] font-semibold">{title}</p>
+        {subtitle ? (
+          <p className="mt-1 truncate text-sm text-[#6B7280]">
+            {subtitle}
+          </p>
+        ) : null}
+      </div>
+      {trailing ? <div className="shrink-0">{trailing}</div> : null}
+    </div>
+  );
+}
+
+const networkStyles: Record<string, string> = {
+  MTN: "bg-[#FFCC00] text-black",
+  Airtel: "bg-[#E60012] text-white",
+  Glo: "bg-[#008751] text-white",
+  "9mobile": "bg-[#87B818] text-white",
+};
+
+function formatPhone(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+
+  if (!digits) {
+    return "+234 ... ... ....";
+  }
+
+  return `+${digits}`;
+}
+
+function getInitials(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+
+  if (!parts.length) {
+    return "DW";
+  }
+
+  return parts
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+}
+
 export default function SettingsPage() {
   const router = useRouter();
+  const [alertsEnabled, setAlertsEnabled] = useState(true);
+  const fullName = useAppStore((state) => state.fullName);
   const phoneNumber = useAppStore((state) => state.phoneNumber);
+  const networkProvider = useAppStore((state) => state.networkProvider);
   const isActivated = useAppStore((state) => state.isActivated);
   const demoMode = useAppStore((state) => state.demoMode);
   const fraudProtection = useAppStore((state) => state.fraudProtection);
@@ -52,6 +116,9 @@ export default function SettingsPage() {
   const settingsMutation = useMutation({
     mutationFn: updateSettings,
   });
+  const displayName = fullName || "DataWatch User";
+  const activeNetwork = networkProvider || "Network";
+  const planName = `${activeNetwork}${activeNetwork === "Network" ? "" : " · MyData Plan"}`;
 
   function updateFraudProtection(enabled: boolean) {
     setFraudProtection(enabled);
@@ -69,6 +136,16 @@ export default function SettingsPage() {
     });
   }
 
+  function updateAlerts(enabled: boolean) {
+    setAlertsEnabled(enabled);
+    settingsMutation.mutate({
+      notifications: {
+        usageAlerts: enabled,
+        subscriptionAlerts: enabled,
+      },
+    });
+  }
+
   function signOut() {
     logout();
     router.push("/auth");
@@ -76,83 +153,93 @@ export default function SettingsPage() {
 
   return (
     <AppShell>
-      <h1 className="text-4xl font-bold">Settings</h1>
+      <h1 className="text-[30px] leading-tight font-bold">Settings</h1>
 
-      <ProductCard className="mt-8 flex items-center gap-5">
-        <div className="relative flex h-24 w-24 shrink-0 items-center justify-center rounded-[22px] bg-[#008751]/10 text-3xl font-bold text-white">
-          <Image
-            src="/datawatchimg-removebg-preview.png"
-            alt="DataWatch NG"
-            width={70}
-            height={70}
-            className="h-16 w-16 object-contain"
-          />
-          <span className="absolute right-[-8px] bottom-2 flex h-10 w-10 items-center justify-center rounded-full border-4 border-white bg-[#0A0A0A]">
-            <Camera size={17} strokeWidth={1.5} />
-          </span>
+      <ProductCard className="mt-6 p-0">
+        <div className="flex min-w-0 items-center gap-4 p-5">
+          <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-[17px] bg-[#008751] text-xl font-black text-white">
+            {getInitials(displayName)}
+            <span className="absolute right-[-6px] bottom-[-4px] flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-white bg-[#0A0A0A]">
+              <Camera size={14} strokeWidth={1.5} />
+            </span>
+          </div>
+          <div className="min-w-0 flex-1">
+            <h2 className="truncate text-lg font-bold">{displayName}</h2>
+            <p className="mt-1 break-all text-sm font-medium text-[#6B7280]">
+              {formatPhone(phoneNumber)}
+            </p>
+          </div>
+          <button
+            type="button"
+            aria-label="Edit profile"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/[0.04] text-[#0A0A0A] transition hover:bg-black/[0.07] focus-visible:ring-4 focus-visible:ring-[#008751]/20 focus-visible:outline-none"
+          >
+            <Pencil size={16} strokeWidth={1.7} />
+          </button>
         </div>
-        <div>
-          <h2 className="text-2xl font-bold">Your account</h2>
-          <p className="mt-1 text-xl font-medium text-[#6B7280]">
-            {phoneNumber || "+234 ... ... ...."}
-          </p>
+        <div className="flex items-center gap-3 border-t border-black/[0.06] px-5 py-3.5">
+          <span
+            className={`rounded-full px-4 py-2 text-xs font-black ${
+              networkStyles[activeNetwork] || "bg-black/[0.06] text-[#6B7280]"
+            }`}
+          >
+            {activeNetwork}
+          </span>
+          <span className="text-sm font-medium text-[#6B7280]">
+            Active network
+          </span>
         </div>
       </ProductCard>
 
-      <h2 className="mt-7 text-base font-bold tracking-[0.14em] text-[#6B7280] uppercase">
+      <h2 className="mt-6 text-sm font-bold tracking-[0.14em] text-[#6B7280] uppercase">
         Network
       </h2>
       <ProductCard className="mt-4 divide-y divide-black/[0.06] p-0">
-        <div className="flex items-center gap-4 p-5">
-          <span className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-black/[0.04]">
-            <Wifi size={24} strokeWidth={1.5} />
-          </span>
-          <div className="flex-1">
-            <p className="text-xl font-semibold">Active line</p>
-            <p className="text-lg text-[#6B7280]">
-              {isActivated ? "Activated" : "Not activated"}
-            </p>
-          </div>
-          <ChevronRight
-            size={22}
-            strokeWidth={1.5}
-            className="text-[#6B7280]"
-          />
-        </div>
-        <div className="flex items-center gap-4 p-5">
-          <span className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-black/[0.04]">
-            <Shield size={24} strokeWidth={1.5} />
-          </span>
-          <p className="flex-1 text-xl font-semibold">Fraud protection</p>
-          <Toggle enabled={fraudProtection} onChange={updateFraudProtection} />
-        </div>
+        <SettingsRow
+          icon={Wifi}
+          title="Active line"
+          subtitle={isActivated ? planName : "Not activated"}
+          trailing={
+            <ChevronRight
+              size={22}
+              strokeWidth={1.5}
+              className="text-[#6B7280]"
+            />
+          }
+        />
+        <SettingsRow
+          icon={Shield}
+          title="Fraud protection"
+          trailing={
+            <Toggle enabled={fraudProtection} onChange={updateFraudProtection} />
+          }
+        />
       </ProductCard>
 
-      <h2 className="mt-7 text-base font-bold tracking-[0.14em] text-[#6B7280] uppercase">
+      <h2 className="mt-6 text-sm font-bold tracking-[0.14em] text-[#6B7280] uppercase">
         App
       </h2>
       <ProductCard className="mt-4 divide-y divide-black/[0.06] p-0">
-        <div className="flex items-center gap-4 p-5">
-          <span className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-black/[0.04]">
-            <User size={24} strokeWidth={1.5} />
-          </span>
-          <p className="flex-1 text-xl font-semibold">Demo mode</p>
-          <Toggle enabled={demoMode} onChange={toggleDemoMode} />
-        </div>
-        <div className="flex items-center gap-4 p-5">
-          <span className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-black/[0.04]">
-            <User size={24} strokeWidth={1.5} />
-          </span>
-          <p className="flex-1 text-xl font-semibold">Biometric lock</p>
-          <Toggle enabled={false} onChange={() => undefined} />
-        </div>
-        <div className="flex items-center gap-4 p-5">
-          <span className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-black/[0.04]">
-            <User size={24} strokeWidth={1.5} />
-          </span>
-          <p className="flex-1 text-xl font-semibold">Pidgin responses</p>
-          <Toggle enabled={pidginResponses} onChange={updatePidginResponses} />
-        </div>
+        <SettingsRow
+          icon={User}
+          title="Demo mode"
+          trailing={<Toggle enabled={demoMode} onChange={toggleDemoMode} />}
+        />
+        <SettingsRow
+          icon={User}
+          title="Biometric lock"
+          trailing={<Toggle enabled={false} onChange={() => undefined} />}
+        />
+        <SettingsRow
+          icon={Bell}
+          title="Allow alerts"
+          trailing={<Toggle enabled={alertsEnabled} onChange={updateAlerts} />}
+        />
+        <SettingsRow
+          icon={User}
+          title="Pidgin responses"
+          trailing={<Toggle enabled={pidginResponses} onChange={updatePidginResponses} />}
+        />
       </ProductCard>
 
       <Button

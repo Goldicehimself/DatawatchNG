@@ -1,5 +1,4 @@
 import User from "../models/User.js";
-import { ensureDemoData } from "../services/demoData.service.js";
 import { createOtp, verifyOtp } from "../services/otp.service.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { httpError } from "../utils/httpError.js";
@@ -76,8 +75,6 @@ export const verifyOtpAndLogin = asyncHandler(async (req, res) => {
     existingUser.isVerified = true;
     await existingUser.save();
   }
-
-  await ensureDemoData(user);
 
   res.json({
     success: true,

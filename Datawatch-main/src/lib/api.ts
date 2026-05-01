@@ -41,6 +41,7 @@ export type BackendAlert = {
   title: string;
   message: string;
   createdAt: string;
+  flaggedAt?: string;
   readAt?: string;
 };
 
@@ -117,6 +118,16 @@ export async function getAlerts() {
 export async function markAlertRead(id: string) {
   const { data } = await http.patch<{ success: boolean; alert: BackendAlert }>(`/alerts/${id}/read`);
   return data.alert;
+}
+
+export async function flagAlert(id: string) {
+  const { data } = await http.patch<{ success: boolean; alert: BackendAlert }>(`/alerts/${id}/flag`);
+  return data.alert;
+}
+
+export async function scanAlerts() {
+  const { data } = await http.post<{ success: boolean; alerts: BackendAlert[] }>("/alerts/scan");
+  return data.alerts;
 }
 
 export async function getSubscriptions() {

@@ -153,8 +153,50 @@ canvas {
   }
 }
 
+@keyframes loader-slide {
+  0% {
+    transform: translateX(-110%);
+  }
+
+  50% {
+    transform: translateX(60%);
+  }
+
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+@keyframes heartbeat-logo {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  14% {
+    transform: scale(1.08);
+  }
+
+  28% {
+    transform: scale(1);
+  }
+
+  42% {
+    transform: scale(1.05);
+  }
+
+  70% {
+    transform: scale(1);
+  }
+}
+
 .animate-fade-up {
   animation: fade-up 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.heartbeat-logo {
+  animation: heartbeat-logo 1.45s ease-in-out infinite;
+  transform-origin: center;
 }
 
 .live-pulse {

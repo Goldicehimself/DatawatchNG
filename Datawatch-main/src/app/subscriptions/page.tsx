@@ -5,12 +5,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AppShell } from "@/components/layout/app-shell";
 import { ProductCard } from "@/components/product/product-card";
 import { Button, ButtonLink } from "@/components/ui/button";
+import { Skeleton, TextSkeleton } from "@/components/ui/skeleton";
+import { demoSubscriptions } from "@/data/product";
 import { cancelSubscription, formatNaira, getSubscriptions } from "@/lib/api";
 import { useAppStore } from "@/lib/app-store";
 
 export default function SubscriptionsPage() {
   const queryClient = useQueryClient();
   const token = useAppStore((state) => state.token);
+  const demoMode = useAppStore((state) => state.demoMode);
   const subscriptionsQuery = useQuery({
     queryKey: ["subscriptions"],
     queryFn: getSubscriptions,
@@ -24,6 +27,8 @@ export default function SubscriptionsPage() {
       void queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
   });
+  const loadingRealSubscriptions =
+    Boolean(token) && !demoMode && subscriptionsQuery.isLoading;
 
   return (
     <AppShell>
@@ -36,7 +41,7 @@ export default function SubscriptionsPage() {
         Cancellation is simulated by the backend MVP.
       </p>
 
-      {!token ? (
+      {!token && !demoMode ? (
         <ProductCard className="mt-6 text-center">
           <h2 className="text-xl font-semibold">No backend session</h2>
           <p className="mt-2 text-sm text-[#6B7280]">
@@ -49,7 +54,54 @@ export default function SubscriptionsPage() {
       ) : null}
 
       <div className="mt-6 grid gap-4">
-        {(subscriptionsQuery.data || []).map((sub) => {
+        {loadingRealSubscriptions
+          ? Array.from({ length: 3 }).map((_, index) => (
+              <ProductCard key={index}>
+                <div className="flex items-start gap-4">
+                  <Skeleton className="h-11 w-11 shrink-0 rounded-[14px]" />
+                  <div className="min-w-0 flex-1 space-y-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="space-y-2">
+                        <TextSkeleton className="w-36" />
+                        <TextSkeleton className="w-24" />
+                      </div>
+                      <TextSkeleton className="w-20" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-9 w-24 rounded-full" />
+                      <Skeleton className="h-9 w-28" />
+                    </div>
+                  </div>
+                </div>
+              </ProductCard>
+            ))
+          : demoMode
+          ? demoSubscriptions.map((sub) => (
+              <ProductCard key={sub.name}>
+                <div className="flex items-start gap-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-[#FFCC00]/25 text-[#7A5A00]">
+                    <AlertTriangle size={22} strokeWidth={1.5} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h2 className="text-lg font-semibold">{sub.name}</h2>
+                        <p className="mt-1 text-sm text-[#6B7280]">
+                          {sub.provider}
+                        </p>
+                      </div>
+                      <span className="text-right text-sm font-semibold">
+                        {sub.charge}
+                      </span>
+                    </div>
+                    <span className="mt-4 inline-flex rounded-full bg-[#FFCC00]/25 px-3 py-2 text-xs font-semibold text-[#7A5A00]">
+                      {sub.status}
+                    </span>
+                  </div>
+                </div>
+              </ProductCard>
+            ))
+          : (subscriptionsQuery.data || []).map((sub) => {
           const cancelled = sub.status === "cancelled";
           const suspicious = sub.status === "flagged" || sub.isHidden;
 
@@ -115,9 +167,9 @@ export default function SubscriptionsPage() {
               </div>
             </ProductCard>
           );
-        })}
+          })}
 
-        {token && !subscriptionsQuery.isLoading && !subscriptionsQuery.data?.length ? (
+        {token && !demoMode && !subscriptionsQuery.isLoading && !subscriptionsQuery.data?.length ? (
           <ProductCard className="text-center">
             <h2 className="text-xl font-semibold">No subscriptions found</h2>
             <p className="mt-2 text-sm text-[#6B7280]">

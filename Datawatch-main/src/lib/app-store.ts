@@ -12,6 +12,7 @@ type AlertState = "open" | "dismissed" | "flagged" | "investigating";
 
 type AppState = {
   token: string;
+  fullName: string;
   phoneNumber: string;
   networkProvider: string;
   isVerified: boolean;
@@ -33,6 +34,7 @@ type AppState = {
       };
     },
     isDemo?: boolean,
+    fullName?: string,
   ) => void;
   completeVerification: (phoneNumber: string, networkProvider: string) => void;
   activateLine: () => void;
@@ -57,6 +59,7 @@ export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
       token: "",
+      fullName: "",
       phoneNumber: "",
       networkProvider: "",
       isVerified: false,
@@ -67,9 +70,10 @@ export const useAppStore = create<AppState>()(
       alertStates: {},
       cancelledSubscriptions: [],
       watcherMessages: initialWatcherMessages,
-      setSession: (token, phoneNumber, networkProvider, settings, isDemo = false) =>
+      setSession: (token, phoneNumber, networkProvider, settings, isDemo = false, fullName = "") =>
         set({
           token,
+          fullName,
           phoneNumber,
           networkProvider,
           isVerified: true,
@@ -113,6 +117,7 @@ export const useAppStore = create<AppState>()(
       logout: () =>
         set({
           token: "",
+          fullName: "",
           phoneNumber: "",
           networkProvider: "",
           isVerified: false,

@@ -12,6 +12,7 @@ const alertSchema = new mongoose.Schema(
     title: { type: String, required: true },
     message: { type: String, required: true },
     metadata: { type: mongoose.Schema.Types.Mixed, default: {} },
+    flaggedAt: Date,
     readAt: Date
   },
   { timestamps: true }

@@ -7,7 +7,7 @@ import { AppShell } from "@/components/layout/app-shell";
 import { ProductCard } from "@/components/product/product-card";
 import { ProgressRow, UsageBars } from "@/components/product/mini-charts";
 import { Button, ButtonLink } from "@/components/ui/button";
-import { demoAlerts, demoApps, demoSubscriptions } from "@/data/product";
+import { demoAlerts, demoApps, demoSubscriptions, demoUsage } from "@/data/product";
 import { startDemo } from "@/lib/api";
 import { useAppStore } from "@/lib/app-store";
 
@@ -75,8 +75,8 @@ export default function DemoPage() {
 
       <div className="mt-6 grid gap-5">
         <ProductCard>
-          <h2 className="mb-5 font-semibold">Weekly chart</h2>
-          <UsageBars />
+          <h2 className="mb-5 font-semibold">Daily data use</h2>
+          <UsageBars data={demoUsage} />
         </ProductCard>
         <ProductCard>
           <h2 className="mb-5 font-semibold">App breakdown</h2>

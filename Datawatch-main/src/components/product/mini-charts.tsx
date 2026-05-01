@@ -6,6 +6,16 @@ export type UsageBarItem = {
   value: number;
 };
 
+const emptyUsage: UsageBarItem[] = [
+  { day: "Mon", value: 0 },
+  { day: "Tue", value: 0 },
+  { day: "Wed", value: 0 },
+  { day: "Thu", value: 0 },
+  { day: "Fri", value: 0 },
+  { day: "Sat", value: 0 },
+  { day: "Sun", value: 0 },
+];
+
 export function UsageBars({
   compact = false,
   data,
@@ -13,23 +23,43 @@ export function UsageBars({
   compact?: boolean;
   data?: UsageBarItem[];
 }) {
-  const values = data?.length ? data : demoUsage;
+  const values = data === undefined ? demoUsage : data.length ? data : emptyUsage;
+  const hasRecordedUsage =
+    data === undefined || values.some((item) => item.value > 0);
   const maxValue = Math.max(...values.map((item) => item.value), 1);
 
   return (
-    <div className={cn("flex items-end gap-2", compact ? "h-24" : "h-40")}>
-      {values.map((item, index) => (
-        <div
-          key={`${item.day}-${index}`}
-          className="flex flex-1 flex-col items-center gap-2"
-        >
+    <div>
+      <div className={cn("flex gap-2", compact ? "h-24" : "h-40")}>
+        {values.map((item, index) => (
           <div
-            className="w-full rounded-t-[10px] bg-[#008751]"
-            style={{ height: `${Math.max(8, (item.value / maxValue) * 100)}%` }}
-          />
-          <span className="text-[11px] text-[#6B7280]">{item.day}</span>
-        </div>
-      ))}
+            key={`${item.day}-${index}`}
+            className="flex h-full flex-1 flex-col items-center gap-2"
+          >
+            <div className="flex min-h-0 flex-1 items-end self-stretch">
+              <div
+                className={cn(
+                  "w-full rounded-t-[10px] transition",
+                  hasRecordedUsage
+                    ? "bg-[#008751]"
+                    : "border border-black/[0.08] bg-black/[0.14]",
+                )}
+                style={{
+                  height: hasRecordedUsage
+                    ? `${Math.max(10, (item.value / maxValue) * 100)}%`
+                    : "18px",
+                }}
+              />
+            </div>
+            <span className="text-[11px] text-[#6B7280]">{item.day}</span>
+          </div>
+        ))}
+      </div>
+      {!hasRecordedUsage ? (
+        <p className="mt-3 text-center text-xs font-semibold text-[#6B7280]">
+          0MB recorded this week
+        </p>
+      ) : null}
     </div>
   );
 }

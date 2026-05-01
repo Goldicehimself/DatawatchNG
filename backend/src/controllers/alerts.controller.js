@@ -1,6 +1,7 @@
 import Alert from "../models/Alert.js";
 import { runFraudScan } from "../services/fraud.service.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { httpError } from "../utils/httpError.js";
 
 export const listAlerts = asyncHandler(async (req, res) => {
   const alerts = await Alert.find({ user: req.user._id }).sort({ createdAt: -1 }).limit(100);
@@ -13,6 +14,25 @@ export const markAlertRead = asyncHandler(async (req, res) => {
     { readAt: new Date() },
     { new: true }
   );
+
+  if (!alert) {
+    throw httpError(404, "Alert not found");
+  }
+
+  res.json({ success: true, alert });
+});
+
+export const flagAlert = asyncHandler(async (req, res) => {
+  const alert = await Alert.findOneAndUpdate(
+    { _id: req.params.id, user: req.user._id },
+    { flaggedAt: new Date() },
+    { new: true }
+  );
+
+  if (!alert) {
+    throw httpError(404, "Alert not found");
+  }
+
   res.json({ success: true, alert });
 });
 

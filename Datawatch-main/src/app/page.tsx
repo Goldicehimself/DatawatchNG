@@ -103,7 +103,7 @@ export default function LandingPage() {
               </div>
             </div>
             <ButtonLink
-              href="/auth"
+              href="/auth?mode=signin"
               className="h-9 rounded-full bg-white/12 px-5 text-xs text-white backdrop-blur"
             >
               Sign in
@@ -395,7 +395,15 @@ export default function LandingPage() {
 
         <section className="px-5 py-8">
           <div className="rounded-[28px] bg-gradient-to-br from-[#008751] to-[#00653E] p-7 text-center text-white shadow-[0_26px_70px_rgba(0,92,53,0.26)]">
-            <div className="mx-auto h-16 w-16 rounded-full border border-white/50" />
+            <div className="relative mx-auto h-24 w-24 overflow-hidden rounded-full border border-white/30 bg-white/10 shadow-[0_20px_48px_rgba(0,0,0,0.16)]">
+              <Image
+                src="/fac.webp"
+                alt="Social apps consuming mobile data"
+                fill
+                sizes="96px"
+                className="object-cover object-center"
+              />
+            </div>
             <h2 className="mx-auto mt-8 max-w-[260px] text-3xl leading-tight font-black tracking-[-0.04em]">
               Track your data like you track your food orders.
             </h2>

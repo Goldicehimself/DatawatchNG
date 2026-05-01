@@ -198,17 +198,17 @@ export function PhoneAuth() {
   }
 
   return (
-    <main className="min-h-screen bg-[#FAFAFA] px-6 py-6 text-[#0A0A0A]">
+    <main className="auth-screen min-h-screen bg-[#FAFAFA] px-6 py-6 text-[#0A0A0A] dark:bg-[#020805] dark:text-[#F4FFF9]">
       <div className="mx-auto min-h-[calc(100vh-48px)] w-full max-w-md">
         <header className="relative flex items-center justify-between">
           <Link
             href="/"
             aria-label="Back"
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#0A0A0A] shadow-[0_10px_28px_rgba(15,23,42,0.06)]"
+            className="auth-icon-button flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#0A0A0A] shadow-[0_10px_28px_rgba(15,23,42,0.06)] dark:bg-[#0D1A13] dark:text-[#FFFFFF]"
           >
             <ArrowLeft size={22} strokeWidth={1.6} />
           </Link>
-          <div className="absolute left-1/2 flex h-11 w-11 -translate-x-1/2 items-center justify-center rounded-full bg-white shadow-[0_10px_28px_rgba(15,23,42,0.08)]">
+          <div className="auth-logo absolute left-1/2 flex h-11 w-11 -translate-x-1/2 items-center justify-center rounded-full bg-white shadow-[0_10px_28px_rgba(15,23,42,0.08)] dark:bg-[#0D1A13]">
             <Image
               src="/datawatchimg-removebg-preview.png"
               alt="DataWatch NG"
@@ -220,7 +220,7 @@ export function PhoneAuth() {
           <div className="h-12 w-12" />
         </header>
 
-        <div className="mt-10 rounded-full bg-black/[0.03] p-1">
+        <div className="auth-segment mt-10 rounded-full bg-black/[0.03] p-1 dark:bg-white/[0.10]">
           <div className="grid grid-cols-2 gap-1">
             <button
               type="button"
@@ -228,8 +228,8 @@ export function PhoneAuth() {
               className={cn(
                 "h-12 rounded-full text-sm font-semibold transition",
                 mode === "create"
-                  ? "bg-black text-white shadow-[0_10px_24px_rgba(0,0,0,0.16)]"
-                  : "text-[#6B7280]",
+                  ? "bg-black text-white shadow-[0_10px_24px_rgba(0,0,0,0.16)] dark:bg-[#00A866] dark:text-[#03100A]"
+                  : "text-[#6B7280] dark:text-[#F4FFF9]",
               )}
             >
               Create account
@@ -240,8 +240,8 @@ export function PhoneAuth() {
               className={cn(
                 "h-12 rounded-full text-sm font-semibold transition",
                 mode === "signin"
-                  ? "bg-black text-white shadow-[0_10px_24px_rgba(0,0,0,0.16)]"
-                  : "text-[#6B7280]",
+                  ? "bg-black text-white shadow-[0_10px_24px_rgba(0,0,0,0.16)] dark:bg-[#00A866] dark:text-[#03100A]"
+                  : "text-[#6B7280] dark:text-[#F4FFF9]",
               )}
             >
               Sign in
@@ -254,7 +254,7 @@ export function PhoneAuth() {
             <h1 className="text-[28px] leading-tight font-bold tracking-[-0.03em]">
               {mode === "create" ? "Create your account" : "Sign in"}
             </h1>
-            <p className="mt-3 text-base text-[#6B7280]">
+            <p className="mt-3 text-base text-[#6B7280] dark:text-[#D8E2DD]">
               {mode === "create"
                 ? "Just your name and Nigerian number."
                 : "Enter your Nigerian number to continue."}
@@ -263,13 +263,13 @@ export function PhoneAuth() {
             {mode === "create" ? (
               <div className="mt-8">
               <label
-                className="text-xs font-bold tracking-[0.14em] text-[#6B7280] uppercase"
+                className="text-xs font-bold tracking-[0.14em] text-[#6B7280] uppercase dark:text-[#D8E2DD]"
                 htmlFor="full-name"
               >
                 Full name
               </label>
-              <div className="mt-3 flex h-14 items-center gap-3 rounded-[16px] border border-black/10 bg-white px-4 transition focus-within:border-[#008751] focus-within:ring-4 focus-within:ring-[#008751]/10">
-                <User size={19} strokeWidth={1.5} className="text-[#8A8F98]" />
+              <div className="auth-input mt-3 flex h-14 items-center gap-3 rounded-[16px] border border-black/10 bg-white px-4 transition focus-within:border-[#008751] focus-within:ring-4 focus-within:ring-[#008751]/10 dark:border-white/[0.14] dark:bg-[#0D1A13] dark:focus-within:border-[#2EE68F]">
+                <User size={19} strokeWidth={1.5} className="text-[#8A8F98] dark:text-[#D8E2DD]" />
                 <input
                   id="full-name"
                   value={fullName}
@@ -283,7 +283,7 @@ export function PhoneAuth() {
 
             <div className={mode === "create" ? "mt-7" : "mt-8"}>
               <label
-                className="text-xs font-bold tracking-[0.14em] text-[#6B7280] uppercase"
+                className="text-xs font-bold tracking-[0.14em] text-[#6B7280] uppercase dark:text-[#D8E2DD]"
                 htmlFor="phone"
               >
                 Phone
@@ -291,19 +291,19 @@ export function PhoneAuth() {
               <div className="mt-3">
                 <div
                   className={cn(
-                    "flex h-14 items-center gap-3 rounded-[16px] border bg-white px-4 transition focus-within:border-[#008751] focus-within:ring-4 focus-within:ring-[#008751]/10",
+                    "auth-input flex h-14 items-center gap-3 rounded-[16px] border bg-white px-4 transition focus-within:border-[#008751] focus-within:ring-4 focus-within:ring-[#008751]/10 dark:bg-[#0D1A13] dark:focus-within:border-[#2EE68F]",
                     network
-                      ? "border-[#008751] shadow-[0_18px_44px_rgba(0,135,81,0.08)]"
-                      : "border-black/10",
+                      ? "border-[#008751] shadow-[0_18px_44px_rgba(0,135,81,0.08)] dark:border-[#2EE68F]"
+                      : "border-black/10 dark:border-white/[0.14]",
                   )}
                 >
                   <Phone
                     size={19}
                     strokeWidth={1.5}
-                    className="shrink-0 text-[#8A8F98]"
+                    className="shrink-0 text-[#8A8F98] dark:text-[#D8E2DD]"
                   />
                   <span className="shrink-0 text-base font-bold">+234</span>
-                  <span className="h-7 w-px bg-black/10" />
+                  <span className="h-7 w-px bg-black/10 dark:bg-white/[0.16]" />
                   <input
                     id="phone"
                     value={localPhone}
@@ -329,7 +329,7 @@ export function PhoneAuth() {
                 </div>
               </div>
               {network ? (
-                <p className="mt-3 text-sm font-bold text-[#008751]">
+                <p className="mt-3 text-sm font-bold text-[#008751] dark:text-[#2EE68F]">
                   Detected network: {network}
                 </p>
               ) : null}
@@ -363,7 +363,7 @@ export function PhoneAuth() {
               </div>
             ) : null}
 
-            <p className="mx-auto mt-6 max-w-sm text-center text-xs leading-6 text-[#6B7280]">
+            <p className="mx-auto mt-6 max-w-sm text-center text-xs leading-6 text-[#6B7280] dark:text-[#D8E2DD]">
               By continuing you agree to DataWatch NG&apos;s terms & privacy.
               <br />
               We never sell your data.
@@ -379,11 +379,11 @@ export function PhoneAuth() {
             <h1 className="text-[28px] leading-tight font-bold tracking-[-0.03em]">
               Enter verification code
             </h1>
-            <p className="mt-3 text-sm leading-6 text-[#6B7280]">
+            <p className="mt-3 text-sm leading-6 text-[#6B7280] dark:text-[#D8E2DD]">
               We sent a 6-digit code to {phone}.
             </p>
             {demoCode ? (
-              <p className="mt-4 rounded-[14px] bg-[#008751]/10 px-4 py-3 text-sm font-semibold text-[#005C35]">
+              <p className="mt-4 rounded-[14px] bg-[#008751]/10 px-4 py-3 text-sm font-semibold text-[#005C35] dark:bg-[#00A866]/18 dark:text-[#54F2AB]">
                 Demo OTP: {demoCode}
               </p>
             ) : null}
@@ -397,17 +397,17 @@ export function PhoneAuth() {
                   value={digit}
                   onChange={(event) => updateOtp(index, event.target.value)}
                   inputMode="numeric"
-                  className="h-12 rounded-[14px] border border-black/10 bg-white text-center text-xl font-semibold"
+                  className="auth-input h-12 rounded-[14px] border border-black/10 bg-white text-center text-xl font-semibold dark:border-white/[0.14] dark:bg-[#0D1A13]"
                   maxLength={1}
                   aria-label={`OTP digit ${index + 1}`}
                   autoFocus={index === 0}
                 />
               ))}
             </div>
-            <div className="mt-5 flex items-center justify-between text-sm text-[#6B7280]">
+            <div className="mt-5 flex items-center justify-between text-sm text-[#6B7280] dark:text-[#D8E2DD]">
               <span>Resend in {seconds}s</span>
               {otpValue.length === 6 || loading ? (
-                <span className="inline-flex items-center gap-2 text-[#008751]">
+                <span className="inline-flex items-center gap-2 text-[#008751] dark:text-[#2EE68F]">
                   <Loader2 size={16} strokeWidth={1.5} className="animate-spin" />
                   Verifying
                 </span>
@@ -425,7 +425,7 @@ export function PhoneAuth() {
               <CheckCircle2 size={32} strokeWidth={1.5} />
             </div>
             <h1 className="text-3xl font-black">Verification complete</h1>
-            <p className="mt-3 text-sm leading-6 text-[#6B7280]">
+            <p className="mt-3 text-sm leading-6 text-[#6B7280] dark:text-[#D8E2DD]">
               Your monitoring session is ready.
             </p>
             <ButtonLink href="/dashboard" className="mt-6 w-full">

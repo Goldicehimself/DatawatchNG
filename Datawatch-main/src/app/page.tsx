@@ -11,6 +11,7 @@ import {
   Wifi,
 } from "lucide-react";
 import Image from "next/image";
+import { ThemeToggle } from "@/components/product/theme-toggle";
 import { ButtonLink } from "@/components/ui/button";
 import { env } from "@/config/env";
 
@@ -65,9 +66,9 @@ export default function LandingPage() {
   const whatsappHref = `https://wa.me/${env.NEXT_PUBLIC_WHATSAPP_NUMBER}?text=${encodeURIComponent(env.NEXT_PUBLIC_WHATSAPP_PREFILL)}`;
 
   return (
-    <main className="bg-[#F6F6F4] text-[#050505]">
-      <div className="mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden bg-[#F7F7F5]">
-        <section className="relative min-h-[620px] overflow-hidden bg-black px-5 pt-5 pb-12 text-white">
+    <main className="landing-page bg-[#F6F6F4] text-[#050505] dark:bg-[#020805] dark:text-[#F4FFF9]">
+      <div className="mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden bg-[#F7F7F5] dark:bg-[#07110D]">
+        <section className="landing-hero relative min-h-[620px] overflow-hidden bg-black px-5 pt-5 pb-12 text-white">
           <div className="absolute inset-0">
             {[
               "https://images.unsplash.com/photo-1577948000111-9c970dfe3743?auto=format&fit=crop&w=1200&q=80",
@@ -102,12 +103,15 @@ export default function LandingPage() {
                 <p className="text-[10px] font-semibold text-white/70">NG</p>
               </div>
             </div>
-            <ButtonLink
-              href="/auth?mode=signin"
-              className="h-9 rounded-full bg-white/12 px-5 text-xs text-white backdrop-blur"
-            >
-              Sign in
-            </ButtonLink>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <ButtonLink
+                href="/auth?mode=signin"
+                className="h-9 rounded-full bg-white/12 px-5 text-xs text-white backdrop-blur"
+              >
+                Sign in
+              </ButtonLink>
+            </div>
           </nav>
 
           <div className="relative z-10 mt-16">
@@ -152,7 +156,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="border-b border-black/[0.05] bg-white py-5">
+        <section className="landing-surface border-b border-black/[0.05] bg-white py-5">
           <p className="text-center text-[9px] font-black tracking-[0.34em] text-[#6B7280] uppercase">
             Works across all major Nigerian networks
           </p>
@@ -171,7 +175,7 @@ export default function LandingPage() {
         </section>
 
         <section className="px-5 py-7">
-          <div className="live-message-pill rounded-full bg-white px-5 py-4 text-xs font-semibold text-[#4B5563] shadow-sm">
+          <div className="landing-card live-message-pill rounded-full bg-white px-5 py-4 text-xs font-semibold text-[#4B5563] shadow-sm">
             <span className="mr-2 inline-block h-2 w-2 rounded-full bg-[#008751]" />
             <span className="live-message-text" aria-live="polite">
               {liveMessages.map((message, index) => (
@@ -201,7 +205,7 @@ export default function LandingPage() {
             ].map(([step, title, body]) => (
               <div
                 key={step}
-                className="min-w-[224px] rounded-[18px] bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)]"
+                className="landing-card min-w-[224px] rounded-[18px] bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)]"
               >
                 <p className="text-[10px] font-black tracking-[0.2em] text-[#008751] uppercase">
                   {step}
@@ -229,7 +233,7 @@ export default function LandingPage() {
             ].map(([label, Icon]) => (
               <div
                 key={String(label)}
-                className="flex shrink-0 items-center gap-3 rounded-full bg-white px-5 py-3 text-sm font-bold shadow-sm"
+                className="landing-card flex shrink-0 items-center gap-3 rounded-full bg-white px-5 py-3 text-sm font-bold shadow-sm"
               >
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#008751]/10 text-[#008751]">
                   <Icon size={15} strokeWidth={1.7} />
@@ -253,7 +257,7 @@ export default function LandingPage() {
               return (
                 <div
                   key={feature.title}
-                  className="rounded-[18px] bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)]"
+                  className="landing-card rounded-[18px] bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)]"
                 >
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#008751]/10 text-[#008751]">
                     <Icon size={16} strokeWidth={1.7} />
@@ -275,8 +279,8 @@ export default function LandingPage() {
           <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">
             Your line, at a glance
           </h2>
-          <div className="mt-5 overflow-hidden rounded-[24px] bg-white shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
-            <div className="flex justify-center bg-[#FAFAFA] pt-5">
+          <div className="landing-card mt-5 overflow-hidden rounded-[24px] bg-white shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
+            <div className="landing-surface flex justify-center bg-[#FAFAFA] pt-5">
               <Image
                 src="https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=650&q=80"
                 alt="Phone showing data usage dashboard"
@@ -325,7 +329,7 @@ export default function LandingPage() {
             {insights.map((insight, index) => (
               <div
                 key={insight}
-                className="flex items-center gap-4 rounded-[18px] bg-white p-4 shadow-sm"
+                className="landing-card flex items-center gap-4 rounded-[18px] bg-white p-4 shadow-sm"
               >
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/[0.04] text-xs font-bold text-[#6B7280]">
                   {String(index + 1).padStart(2, "0")}
@@ -343,7 +347,7 @@ export default function LandingPage() {
           <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">
             Chat with Watcher on WhatsApp
           </h2>
-          <div className="mt-5 rounded-[24px] bg-white p-4 shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
+          <div className="landing-card mt-5 rounded-[24px] bg-white p-4 shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
             <div className="overflow-hidden rounded-[18px] bg-[#EDE3D8]">
               <div className="flex items-center gap-3 bg-[#00755A] p-4 text-white">
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#008751]">

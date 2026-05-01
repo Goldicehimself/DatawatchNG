@@ -41,8 +41,8 @@ export function UsageBars({
                 className={cn(
                   "w-full rounded-t-[10px] transition",
                   hasRecordedUsage
-                    ? "bg-[#008751]"
-                    : "border border-black/[0.08] bg-black/[0.14]",
+                    ? "bg-[#008751] dark:bg-[#2EE68F]"
+                    : "border border-black/[0.08] bg-black/[0.14] dark:border-white/[0.12] dark:bg-white/[0.16]",
                 )}
                 style={{
                   height: hasRecordedUsage
@@ -51,12 +51,12 @@ export function UsageBars({
                 }}
               />
             </div>
-            <span className="text-[11px] text-[#6B7280]">{item.day}</span>
+            <span className="text-[11px] text-[#6B7280] dark:text-[#A8B3AD]">{item.day}</span>
           </div>
         ))}
       </div>
       {!hasRecordedUsage ? (
-        <p className="mt-3 text-center text-xs font-semibold text-[#6B7280]">
+        <p className="mt-3 text-center text-xs font-semibold text-[#6B7280] dark:text-[#A8B3AD]">
           0MB recorded this week
         </p>
       ) : null}
@@ -77,11 +77,11 @@ export function ProgressRow({
     <div>
       <div className="mb-2 flex items-center justify-between text-sm">
         <span className="font-medium">{name}</span>
-        <span className="text-[#6B7280]">{value}</span>
+        <span className="text-[#6B7280] dark:text-[#A8B3AD]">{value}</span>
       </div>
-      <div className="h-2 rounded-full bg-black/[0.06]">
+      <div className="h-2 rounded-full bg-black/[0.06] dark:bg-white/[0.10]">
         <div
-          className="h-2 rounded-full bg-[#FFCC00]"
+          className="h-2 rounded-full bg-[#FFCC00] dark:bg-[#FFD84D]"
           style={{ width: `${percent}%` }}
         />
       </div>

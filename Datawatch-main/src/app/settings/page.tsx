@@ -1,8 +1,9 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { Bell, Camera, ChevronRight, Pencil, Shield, User, Wifi } from "lucide-react";
+import { Bell, Camera, ChevronRight, Monitor, Moon, Pencil, Shield, Sun, User, Wifi } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
+import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AppShell } from "@/components/layout/app-shell";
@@ -26,12 +27,12 @@ function Toggle({
       onClick={() => onChange(!enabled)}
       className={cn(
         "flex h-9 w-16 shrink-0 items-center rounded-full p-1 transition focus-visible:ring-4 focus-visible:ring-[#008751]/20 focus-visible:outline-none",
-        enabled ? "bg-[#008751]" : "bg-black/[0.06]",
+        enabled ? "bg-[#008751]" : "bg-black/[0.06] dark:bg-white/[0.14]",
       )}
     >
       <span
         className={cn(
-          "h-7 w-7 rounded-full bg-white shadow-[0_4px_12px_rgba(15,23,42,0.16)] transition",
+          "h-7 w-7 rounded-full bg-white shadow-[0_4px_12px_rgba(15,23,42,0.16)] transition dark:bg-[#F3F7F4]",
           enabled && "translate-x-7",
         )}
       />
@@ -52,13 +53,13 @@ function SettingsRow({
 }) {
   return (
     <div className="flex min-w-0 items-center gap-3 p-4">
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[15px] bg-black/[0.04]">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[15px] bg-black/[0.04] text-[#0A0A0A] dark:bg-white/[0.08] dark:text-[#F3F7F4]">
         <Icon size={20} strokeWidth={1.5} />
       </span>
       <div className="min-w-0 flex-1">
         <p className="truncate text-[15px] font-semibold">{title}</p>
         {subtitle ? (
-          <p className="mt-1 truncate text-sm text-[#6B7280]">
+          <p className="mt-1 truncate text-sm text-[#6B7280] dark:text-[#A8B3AD]">
             {subtitle}
           </p>
         ) : null}
@@ -101,6 +102,7 @@ function getInitials(name: string) {
 
 export default function SettingsPage() {
   const router = useRouter();
+  const { setTheme, theme } = useTheme();
   const [alertsEnabled, setAlertsEnabled] = useState(true);
   const fullName = useAppStore((state) => state.fullName);
   const phoneNumber = useAppStore((state) => state.phoneNumber);
@@ -159,25 +161,25 @@ export default function SettingsPage() {
         <div className="flex min-w-0 items-center gap-4 p-5">
           <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-[17px] bg-[#008751] text-xl font-black text-white">
             {getInitials(displayName)}
-            <span className="absolute right-[-6px] bottom-[-4px] flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-white bg-[#0A0A0A]">
+            <span className="absolute right-[-6px] bottom-[-4px] flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-white bg-[#0A0A0A] dark:border-[#111C17] dark:bg-[#F3F7F4] dark:text-[#0A0A0A]">
               <Camera size={14} strokeWidth={1.5} />
             </span>
           </div>
           <div className="min-w-0 flex-1">
             <h2 className="truncate text-lg font-bold">{displayName}</h2>
-            <p className="mt-1 break-all text-sm font-medium text-[#6B7280]">
+            <p className="mt-1 break-all text-sm font-medium text-[#6B7280] dark:text-[#A8B3AD]">
               {formatPhone(phoneNumber)}
             </p>
           </div>
           <button
             type="button"
             aria-label="Edit profile"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/[0.04] text-[#0A0A0A] transition hover:bg-black/[0.07] focus-visible:ring-4 focus-visible:ring-[#008751]/20 focus-visible:outline-none"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/[0.04] text-[#0A0A0A] transition hover:bg-black/[0.07] focus-visible:ring-4 focus-visible:ring-[#008751]/20 focus-visible:outline-none dark:bg-white/[0.08] dark:text-[#F3F7F4] dark:hover:bg-white/[0.12]"
           >
             <Pencil size={16} strokeWidth={1.7} />
           </button>
         </div>
-        <div className="flex items-center gap-3 border-t border-black/[0.06] px-5 py-3.5">
+        <div className="flex items-center gap-3 border-t border-black/[0.06] px-5 py-3.5 dark:border-white/[0.08]">
           <span
             className={`rounded-full px-4 py-2 text-xs font-black ${
               networkStyles[activeNetwork] || "bg-black/[0.06] text-[#6B7280]"
@@ -185,16 +187,16 @@ export default function SettingsPage() {
           >
             {activeNetwork}
           </span>
-          <span className="text-sm font-medium text-[#6B7280]">
+          <span className="text-sm font-medium text-[#6B7280] dark:text-[#A8B3AD]">
             Active network
           </span>
         </div>
       </ProductCard>
 
-      <h2 className="mt-6 text-sm font-bold tracking-[0.14em] text-[#6B7280] uppercase">
+      <h2 className="mt-6 text-sm font-bold tracking-[0.14em] text-[#6B7280] uppercase dark:text-[#A8B3AD]">
         Network
       </h2>
-      <ProductCard className="mt-4 divide-y divide-black/[0.06] p-0">
+      <ProductCard className="mt-4 divide-y divide-black/[0.06] p-0 dark:divide-white/[0.08]">
         <SettingsRow
           icon={Wifi}
           title="Active line"
@@ -203,7 +205,7 @@ export default function SettingsPage() {
             <ChevronRight
               size={22}
               strokeWidth={1.5}
-              className="text-[#6B7280]"
+              className="text-[#6B7280] dark:text-[#A8B3AD]"
             />
           }
         />
@@ -216,10 +218,48 @@ export default function SettingsPage() {
         />
       </ProductCard>
 
-      <h2 className="mt-6 text-sm font-bold tracking-[0.14em] text-[#6B7280] uppercase">
+      <h2 className="mt-6 text-sm font-bold tracking-[0.14em] text-[#6B7280] uppercase dark:text-[#A8B3AD]">
         App
       </h2>
-      <ProductCard className="mt-4 divide-y divide-black/[0.06] p-0">
+      <ProductCard className="mt-4 divide-y divide-black/[0.06] p-0 dark:divide-white/[0.08]">
+        <div className="p-4">
+          <div className="mb-3 flex items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[15px] bg-black/[0.04] text-[#0A0A0A] dark:bg-white/[0.08] dark:text-[#F3F7F4]">
+              <Sun size={20} strokeWidth={1.5} />
+            </span>
+            <div>
+              <p className="text-[15px] font-semibold">Appearance</p>
+              <p className="mt-1 text-sm text-[#6B7280] dark:text-[#A8B3AD]">Choose your display mode</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-2 rounded-[16px] bg-black/[0.04] p-1 dark:bg-white/[0.08]">
+            {[
+              { value: "light", label: "Light", icon: Sun },
+              { value: "dark", label: "Dark", icon: Moon },
+              { value: "system", label: "System", icon: Monitor },
+            ].map((item) => {
+              const Icon = item.icon;
+              const active = (theme || "system") === item.value;
+
+              return (
+                <button
+                  key={item.value}
+                  type="button"
+                  onClick={() => setTheme(item.value)}
+                  className={cn(
+                    "flex h-10 items-center justify-center gap-1.5 rounded-[12px] text-xs font-bold transition focus-visible:ring-4 focus-visible:ring-[#008751]/20 focus-visible:outline-none",
+                    active
+                      ? "bg-white text-[#008751] shadow-sm dark:bg-[#EAFBF2] dark:text-[#006B3F]"
+                      : "text-[#6B7280] hover:bg-white/60 dark:text-[#A8B3AD] dark:hover:bg-white/[0.10]",
+                  )}
+                >
+                  <Icon size={14} strokeWidth={1.7} />
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
         <SettingsRow
           icon={User}
           title="Demo mode"

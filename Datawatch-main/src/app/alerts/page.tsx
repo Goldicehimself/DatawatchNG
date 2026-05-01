@@ -12,18 +12,18 @@ import { useAppStore } from "@/lib/app-store";
 
 const severityTone: Record<Severity, { text: string; icon: string; rail: string }> = {
   Low: {
-    text: "text-[#008751]",
-    icon: "bg-[#008751]/10 text-[#008751]",
+    text: "text-[#008751] dark:text-[#3EE39B]",
+    icon: "bg-[#008751]/10 text-[#008751] dark:bg-[#008751]/18 dark:text-[#3EE39B]",
     rail: "bg-[#008751]",
   },
   Medium: {
-    text: "text-[#0A0A0A]",
-    icon: "bg-black/[0.03] text-[#0A0A0A]",
+    text: "text-[#0A0A0A] dark:text-[#F3F7F4]",
+    icon: "bg-black/[0.03] text-[#0A0A0A] dark:bg-white/[0.08] dark:text-[#F3F7F4]",
     rail: "bg-transparent",
   },
   High: {
-    text: "text-red-600",
-    icon: "bg-red-50 text-red-600",
+    text: "text-red-600 dark:text-red-300",
+    icon: "bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-300",
     rail: "bg-red-500",
   },
 };
@@ -78,7 +78,7 @@ function AlertCard({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-[26px] border border-black/[0.04] bg-white p-5 shadow-[0_18px_44px_rgba(15,23,42,0.08)] ${
+      className={`relative overflow-hidden rounded-[26px] border border-black/[0.04] bg-white p-5 shadow-[0_18px_44px_rgba(15,23,42,0.08)] dark:border-white/[0.10] dark:bg-[#111C17] dark:text-[#F3F7F4] dark:shadow-[0_18px_44px_rgba(0,0,0,0.30)] ${
         resolved ? "opacity-70" : ""
       }`}
     >
@@ -91,17 +91,17 @@ function AlertCard({
         </span>
         <div className="min-w-0 flex-1">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-            <h2 className="text-lg leading-6 font-black text-[#0A0A0A]">
+            <h2 className="text-lg leading-6 font-black text-[#0A0A0A] dark:text-[#F3F7F4]">
               {title}
             </h2>
             <span className={`pt-1 text-xs font-black tracking-[0.1em] uppercase ${tone.text}`}>
               {severity}
             </span>
           </div>
-          <p className="mt-2 text-base leading-6 text-[#6B7280]">{message}</p>
-          <p className="mt-2 text-sm font-medium text-[#6B7280]">{time}</p>
+          <p className="mt-2 text-base leading-6 text-[#6B7280] dark:text-[#A8B3AD]">{message}</p>
+          <p className="mt-2 text-sm font-medium text-[#6B7280] dark:text-[#A8B3AD]">{time}</p>
           {(resolved || disputed) ? (
-            <p className="mt-3 text-sm font-semibold text-[#008751]">
+            <p className="mt-3 text-sm font-semibold text-[#008751] dark:text-[#3EE39B]">
               {[resolved ? "resolved" : "", disputed ? "disputed" : ""]
                 .filter(Boolean)
                 .join(" · ")}
@@ -112,7 +112,7 @@ function AlertCard({
               type="button"
               disabled={resolved || resolving || !onResolve}
               onClick={onResolve}
-              className="h-14 rounded-[17px] bg-[#008751] text-base font-black text-white transition hover:bg-[#006B3F] disabled:opacity-55"
+              className="h-14 rounded-[17px] bg-[#008751] text-base font-black text-white transition hover:bg-[#006B3F] disabled:opacity-55 dark:bg-[#00A866] dark:hover:bg-[#008751]"
             >
               {resolving ? "Resolving" : resolved ? "Resolved" : "Resolve"}
             </button>
@@ -120,7 +120,7 @@ function AlertCard({
               type="button"
               disabled={disputed || disputing || !onDispute}
               onClick={onDispute}
-              className="h-14 rounded-[17px] bg-black/[0.04] text-base font-black text-[#0A0A0A] transition hover:bg-black/[0.07] disabled:opacity-55"
+              className="h-14 rounded-[17px] bg-black/[0.04] text-base font-black text-[#0A0A0A] transition hover:bg-black/[0.07] disabled:opacity-55 dark:bg-white/[0.10] dark:text-[#F3F7F4] dark:hover:bg-white/[0.14]"
             >
               {disputing ? "Disputing" : disputed ? "Disputed" : "Dispute"}
             </button>
@@ -168,7 +168,7 @@ export default function AlertsPage() {
             <ShieldCheck size={40} strokeWidth={1.5} />
           </div>
           <h2 className="mt-6 text-2xl font-bold">No backend session</h2>
-          <p className="mt-4 max-w-xs text-xl leading-8 text-[#6B7280]">
+          <p className="mt-4 max-w-xs text-xl leading-8 text-[#6B7280] dark:text-[#A8B3AD]">
             Start demo mode or verify your phone to load backend alerts.
           </p>
           <ButtonLink href="/demo" variant="secondary" className="mt-7">
@@ -231,7 +231,7 @@ export default function AlertsPage() {
           {!loadingRealAlerts && !demoMode && backendAlerts.length === 0 ? (
             <ProductCard className="text-center">
               <h2 className="text-xl font-bold">No active backend alerts</h2>
-              <p className="mt-2 text-sm text-[#6B7280]">
+              <p className="mt-2 text-sm text-[#6B7280] dark:text-[#A8B3AD]">
                 Ask Watcher about fraud or start demo mode to seed alerts.
               </p>
             </ProductCard>

@@ -215,6 +215,7 @@ export function PhoneAuth() {
               width={28}
               height={28}
               className="h-7 w-7 object-contain"
+              style={{ width: "100%", height: "100%" }}
             />
           </div>
           <div className="h-12 w-12" />

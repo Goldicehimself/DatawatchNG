@@ -30,6 +30,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   width={34}
                   height={34}
                   className="h-8 w-8 object-contain"
+                  style={{ width: "100%", height: "100%" }}
                 />
               </span>
               <span>

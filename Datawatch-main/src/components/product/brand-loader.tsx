@@ -30,6 +30,7 @@ export function BrandLoader({
             height={compact ? 72 : 92}
             priority
             className="object-contain"
+            style={{ width: "100%", height: "100%" }}
           />
         </div>
 

@@ -80,6 +80,7 @@ export default function LandingPage() {
                 src={src}
                 alt=""
                 fill
+                loading="eager"
                 priority={index === 0}
                 sizes="430px"
                 className={`hero-slide hero-slide-${index + 1} object-cover`}
@@ -96,6 +97,7 @@ export default function LandingPage() {
                   width={26}
                   height={26}
                   className="h-6 w-6 object-contain"
+                  style={{ width: "100%", height: "100%" }}
                 />
               </span>
               <div className="leading-none">

@@ -156,9 +156,20 @@ export function formatNaira(amount = 0) {
 }
 
 export function toUsageBars(dailyUsage: DashboardData["dailyUsage"] = []) {
-  return dailyUsage.map((item) => ({
-    day: new Date(item._id).toLocaleDateString("en", { weekday: "short" }),
-    value: item.amountMb,
+  const dayOrder = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const totals = Object.fromEntries(dayOrder.map((day) => [day, 0])) as Record<string, number>;
+
+  for (const item of dailyUsage) {
+    const day = new Date(item._id).toLocaleDateString("en", { weekday: "short" });
+
+    if (day in totals) {
+      totals[day] += item.amountMb;
+    }
+  }
+
+  return dayOrder.map((day) => ({
+    day,
+    value: totals[day],
   }));
 }
 

@@ -154,6 +154,7 @@ export function PhoneAuth() {
         response.user.phone,
         response.user.network,
         response.user.settings,
+        response.user.isDemo,
       );
       setStep("success");
       setTimeout(() => router.push("/dashboard"), 700);

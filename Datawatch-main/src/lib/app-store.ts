@@ -32,6 +32,7 @@ type AppState = {
         fraudAlerts?: boolean;
       };
     },
+    isDemo?: boolean,
   ) => void;
   completeVerification: (phoneNumber: string, networkProvider: string) => void;
   activateLine: () => void;
@@ -66,14 +67,14 @@ export const useAppStore = create<AppState>()(
       alertStates: {},
       cancelledSubscriptions: [],
       watcherMessages: initialWatcherMessages,
-      setSession: (token, phoneNumber, networkProvider, settings) =>
+      setSession: (token, phoneNumber, networkProvider, settings, isDemo = false) =>
         set({
           token,
           phoneNumber,
           networkProvider,
           isVerified: true,
           isActivated: true,
-          demoMode: false,
+          demoMode: isDemo,
           fraudProtection: settings?.notifications?.fraudAlerts ?? true,
           pidginResponses: settings?.aiLanguage === "pidgin",
           alertStates: {},

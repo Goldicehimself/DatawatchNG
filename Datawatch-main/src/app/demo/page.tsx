@@ -26,6 +26,7 @@ export default function DemoPage() {
         response.user.phone,
         response.user.network,
         response.user.settings,
+        response.user.isDemo,
       );
       router.push("/dashboard");
     } finally {

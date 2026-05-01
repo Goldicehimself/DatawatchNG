@@ -66,7 +66,7 @@ export default function LandingPage() {
 
   return (
     <main className="bg-[#F6F6F4] text-[#050505]">
-      <div className="mx-auto min-h-screen w-full max-w-[430px] overflow-hidden bg-[#F7F7F5]">
+      <div className="mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden bg-[#F7F7F5]">
         <section className="relative min-h-[620px] overflow-hidden bg-black px-5 pt-5 pb-12 text-white">
           <div className="absolute inset-0">
             {[

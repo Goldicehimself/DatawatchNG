@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   title: "DataWatch NG",
   description: "Know where your data goes.",
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/datawatchimg-removebg-preview.png",
+    shortcut: "/datawatchimg-removebg-preview.png",
+    apple: "/datawatchimg-removebg-preview.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

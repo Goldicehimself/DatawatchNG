@@ -47,7 +47,7 @@ export default function DemoPage() {
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Button className="bg-[#008751]" onClick={startBackendDemo} disabled={loading}>
-            {loading ? "Starting..." : "Start backend demo"}
+            {loading ? "Starting..." : "Start demo"}
           </Button>
           <ButtonLink href="/auth" className="bg-white text-[#0A0A0A]">
             Create Account
@@ -55,7 +55,7 @@ export default function DemoPage() {
         </div>
       </div>
 
-      <div className="mt-6 grid gap-5 lg:grid-cols-4">
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
         {[
           { label: "Plan used", value: "4.3GB", icon: Smartphone },
           { label: "Open alerts", value: "3", icon: ShieldAlert },
@@ -73,7 +73,7 @@ export default function DemoPage() {
         })}
       </div>
 
-      <div className="mt-6 grid gap-5 lg:grid-cols-2">
+      <div className="mt-6 grid gap-5">
         <ProductCard>
           <h2 className="mb-5 font-semibold">Weekly chart</h2>
           <UsageBars />
@@ -88,7 +88,7 @@ export default function DemoPage() {
         </ProductCard>
       </div>
 
-      <div className="mt-6 grid gap-5 lg:grid-cols-2">
+      <div className="mt-6 grid gap-5">
         <ProductCard>
           <h2 className="mb-4 font-semibold">Demo alerts</h2>
           {demoAlerts.map((alert) => (

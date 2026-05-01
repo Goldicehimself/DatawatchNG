@@ -14,10 +14,22 @@ function escapeXml(value) {
     .replace(/'/g, "&apos;");
 }
 
+function normalizeWhatsappPhone(phone) {
+  const rawPhone = String(phone || "").replace("whatsapp:", "");
+  const nigerianPhone = normalizeNigerianPhone(rawPhone);
+
+  if (nigerianPhone) {
+    return nigerianPhone;
+  }
+
+  const digits = rawPhone.replace(/\D/g, "");
+  return digits.length >= 8 && digits.length <= 15 ? `+${digits}` : null;
+}
+
 function getWebhookPayload(body) {
   const from = body.From || body.from || body.phone;
   const message = body.Body || body.body || body.message;
-  const phone = normalizeNigerianPhone(String(from || "").replace("whatsapp:", ""));
+  const phone = normalizeWhatsappPhone(from);
 
   return {
     phone,

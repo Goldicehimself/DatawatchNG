@@ -238,7 +238,7 @@ export default function LandingPage() {
               ].map(([label, Icon]) => (
                 <div
                   key={String(label)}
-                  className="landing-card landing-scroll-item flex shrink-0 items-center gap-3 rounded-full bg-white px-5 py-3 text-sm font-bold shadow-sm"
+                  className="landing-card landing-explore-chip landing-scroll-item flex shrink-0 items-center gap-3 rounded-full bg-white px-5 py-3 text-sm font-bold shadow-sm"
                 >
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#008751]/10 text-[#008751]">
                     <Icon size={15} strokeWidth={1.7} />
@@ -335,7 +335,7 @@ export default function LandingPage() {
             {insights.map((insight, index) => (
               <div
                 key={insight}
-                className="landing-card flex items-center gap-4 rounded-[18px] bg-white p-4 shadow-sm"
+                className="landing-card landing-insight-card flex items-center gap-4 rounded-[18px] bg-white p-4 shadow-sm"
               >
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/[0.04] text-xs font-bold text-[#6B7280]">
                   {String(index + 1).padStart(2, "0")}

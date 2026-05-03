@@ -244,6 +244,27 @@ canvas {
   box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
 }
 
+.landing-page .landing-explore-chip {
+  border-color: rgba(0, 135, 81, 0.14);
+  color: #111827;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+}
+
+.landing-page .landing-explore-chip span {
+  background-color: rgba(0, 135, 81, 0.12);
+}
+
+.landing-page .landing-insight-card {
+  border-color: rgba(15, 23, 42, 0.09);
+  color: #111827;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.075);
+}
+
+.landing-page .landing-insight-card span {
+  background-color: rgba(0, 135, 81, 0.09);
+  color: #006b3f;
+}
+
 .dark .landing-page .landing-surface {
   background-color: #0d1a13 !important;
   border-color: rgba(46, 230, 143, 0.16) !important;

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 export function SplashScreen() {
   const pathname = usePathname();
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
@@ -17,6 +17,8 @@ export function SplashScreen() {
     }
 
     window.sessionStorage.setItem("datawatch-splash-seen", "true");
+    setLeaving(false);
+    setVisible(true);
 
     const leaveTimer = window.setTimeout(() => {
       setLeaving(true);

@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { loginWithPin, requestOtp, verifyOtp } from "@/lib/api";
@@ -95,12 +95,14 @@ function toBackendPhone(localPhone: string) {
   return `+234${digits}`;
 }
 
-export function PhoneAuth() {
+export function PhoneAuth({
+  initialMode = "create",
+}: {
+  initialMode?: "create" | "signin";
+}) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const setSession = useAppStore((state) => state.setSession);
   const logout = useAppStore((state) => state.logout);
-  const initialMode = searchParams.get("mode") === "signin" ? "signin" : "create";
   const [fullName, setFullName] = useState("");
   const [localPhone, setLocalPhone] = useState("");
   const [pin, setPin] = useState("");

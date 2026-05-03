@@ -1,10 +1,12 @@
-import { Suspense } from "react";
 import { PhoneAuth } from "@/components/product/phone-auth";
 
-export default function AuthPage() {
-  return (
-    <Suspense fallback={null}>
-      <PhoneAuth />
-    </Suspense>
-  );
+export default async function AuthPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ mode?: string }>;
+}) {
+  const params = await searchParams;
+  const initialMode = params.mode === "signin" ? "signin" : "create";
+
+  return <PhoneAuth initialMode={initialMode} />;
 }

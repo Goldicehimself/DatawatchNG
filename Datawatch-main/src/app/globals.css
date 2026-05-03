@@ -446,6 +446,21 @@ canvas {
   }
 }
 
+@keyframes splash-failsafe-hide {
+  0%,
+  96% {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  100% {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
+}
+
 .animate-fade-up {
   animation: fade-up 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -522,6 +537,10 @@ canvas {
   animation-delay: 12s;
 }
 
+.splash-screen-fallback {
+  animation: splash-failsafe-hide 1900ms step-end forwards;
+}
+
 .hide-scrollbar {
   scrollbar-width: none;
 }
@@ -569,5 +588,37 @@ canvas {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .splash-screen-fallback {
+    animation-duration: 1900ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .heartbeat-logo {
+    animation-duration: 1.45s !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .live-pulse {
+    animation-duration: 1.8s !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .network-marquee {
+    animation-duration: 14s !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .live-message {
+    animation-duration: 15s !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .hero-slide-1,
+  .hero-slide-2,
+  .hero-slide-3 {
+    animation-duration: 12s !important;
+    animation-iteration-count: infinite !important;
   }
 }

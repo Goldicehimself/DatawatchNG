@@ -29,7 +29,7 @@ export function SplashScreen() {
   return (
     <div
       className={cn(
-        "fixed inset-0 z-[999] transition duration-300 ease-out",
+        "splash-screen-fallback fixed inset-0 z-[999] transition duration-300 ease-out",
         leaving && "pointer-events-none opacity-0",
       )}
     >

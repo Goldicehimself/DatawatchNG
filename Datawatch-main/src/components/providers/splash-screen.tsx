@@ -1,14 +1,23 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BrandLoader } from "@/components/product/brand-loader";
 import { cn } from "@/lib/utils";
 
 export function SplashScreen() {
+  const pathname = usePathname();
   const [visible, setVisible] = useState(true);
   const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
+    if (pathname !== "/" || window.sessionStorage.getItem("datawatch-splash-seen") === "true") {
+      setVisible(false);
+      return;
+    }
+
+    window.sessionStorage.setItem("datawatch-splash-seen", "true");
+
     const leaveTimer = window.setTimeout(() => {
       setLeaving(true);
     }, 1300);
@@ -20,7 +29,7 @@ export function SplashScreen() {
       window.clearTimeout(leaveTimer);
       window.clearTimeout(hideTimer);
     };
-  }, []);
+  }, [pathname]);
 
   if (!visible) {
     return null;

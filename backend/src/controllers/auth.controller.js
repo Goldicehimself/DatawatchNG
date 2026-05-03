@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import { createOtp, verifyOtp } from "../services/otp.service.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { httpError } from "../utils/httpError.js";
+import { assertValidPin, hashPin, verifyPin } from "../utils/pin.js";
 import { detectNetwork, normalizeNigerianPhone } from "../utils/phone.js";
 import { signSession } from "../utils/token.js";
 
@@ -14,10 +15,16 @@ export const requestOtp = asyncHandler(async (req, res) => {
   }
 
   if (mode === "signin") {
+    throw httpError(400, "Sign in with your phone number and PIN.");
+  }
+
+  if (mode === "create") {
+    assertValidPin(req.body.pin);
+
     const existingUser = await User.findOne({ phone });
 
-    if (!existingUser) {
-      throw httpError(404, "No account found for this phone number. Create an account first.");
+    if (existingUser) {
+      throw httpError(409, "An account already exists for this phone number. Sign in instead.");
     }
   }
 
@@ -44,10 +51,22 @@ export const verifyOtpAndLogin = asyncHandler(async (req, res) => {
     throw httpError(400, "Phone and OTP code are required");
   }
 
+  if (mode === "signin") {
+    throw httpError(400, "Sign in with your phone number and PIN.");
+  }
+
   const existingUser = await User.findOne({ phone });
 
-  if (mode === "signin" && !existingUser) {
-    throw httpError(404, "No account found for this phone number. Create an account first.");
+  if (mode === "create") {
+    assertValidPin(req.body.pin);
+
+    if (String(req.body.fullName || "").trim().length < 2) {
+      throw httpError(400, "Full name is required");
+    }
+
+    if (existingUser) {
+      throw httpError(409, "An account already exists for this phone number. Sign in instead.");
+    }
   }
 
   const valid = await verifyOtp(phone, code, mode);
@@ -57,13 +76,16 @@ export const verifyOtpAndLogin = asyncHandler(async (req, res) => {
   }
 
   const detectedNetwork = network || detectNetwork(phone) || "unknown";
+  const pinCredential = mode === "create" ? await hashPin(req.body.pin) : {};
   const user =
     existingUser ||
     (await User.findOneAndUpdate(
       { phone },
       {
         phone,
+        fullName: String(req.body.fullName || "").trim(),
         network: detectedNetwork,
+        ...pinCredential,
         isVerified: true,
         onboardingCompletedAt: new Date()
       },
@@ -75,6 +97,38 @@ export const verifyOtpAndLogin = asyncHandler(async (req, res) => {
     existingUser.isVerified = true;
     await existingUser.save();
   }
+
+  res.json({
+    success: true,
+    token: signSession({ userId: user._id.toString() }),
+    user
+  });
+});
+
+export const loginWithPin = asyncHandler(async (req, res) => {
+  const phone = normalizeNigerianPhone(req.body.phone);
+  const { pin } = req.body;
+
+  if (!phone) {
+    throw httpError(400, "Enter a valid Nigerian phone number");
+  }
+
+  assertValidPin(pin);
+
+  const user = await User.findOne({ phone });
+
+  if (!user) {
+    throw httpError(404, "No account found for this phone number. Create an account first.");
+  }
+
+  const valid = await verifyPin(pin, user.pinHash, user.pinSalt);
+
+  if (!valid) {
+    throw httpError(401, "Invalid phone number or PIN");
+  }
+
+  user.isVerified = true;
+  await user.save();
 
   res.json({
     success: true,

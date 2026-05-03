@@ -13,7 +13,7 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
-import { requestOtp, verifyOtp } from "@/lib/api";
+import { loginWithPin, requestOtp, verifyOtp } from "@/lib/api";
 import { useAppStore } from "@/lib/app-store";
 import { cn } from "@/lib/utils";
 
@@ -103,6 +103,8 @@ export function PhoneAuth() {
   const initialMode = searchParams.get("mode") === "signin" ? "signin" : "create";
   const [fullName, setFullName] = useState("");
   const [localPhone, setLocalPhone] = useState("");
+  const [pin, setPin] = useState("");
+  const [confirmPin, setConfirmPin] = useState("");
   const [mode, setMode] = useState<"create" | "signin">(initialMode);
   const [step, setStep] = useState<"phone" | "otp" | "success">("phone");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -117,6 +119,14 @@ export function PhoneAuth() {
   const network = useMemo(() => detectNetwork(phone), [phone]);
   const otpValue = otp.join("");
   const phoneReady = phone.replace(/\D/g, "").length === 13;
+  const pinReady = /^\d{4}$/.test(pin);
+  const createReady =
+    phoneReady && fullName.trim().length >= 2 && pinReady && pin === confirmPin;
+  const signinReady = phoneReady && pinReady;
+
+  function normalizePin(value: string) {
+    return value.replace(/\D/g, "").slice(0, 4);
+  }
 
   async function submitPhone() {
     setLoading(true);
@@ -124,7 +134,27 @@ export function PhoneAuth() {
     setAccountNotFound(false);
 
     try {
-      const response = await requestOtp(phone, mode);
+      if (mode === "signin") {
+        const response = await loginWithPin(phone, pin);
+        setSession(
+          response.token,
+          response.user.phone,
+          response.user.network,
+          response.user.settings,
+          response.user.isDemo,
+          response.user.fullName || "",
+        );
+        setStep("success");
+        setTimeout(() => router.push("/dashboard"), 700);
+        return;
+      }
+
+      if (pin !== confirmPin) {
+        setError("PINs do not match");
+        return;
+      }
+
+      const response = await requestOtp(phone, mode, pin);
       setDemoCode(response.demoCode || "");
       setSeconds(response.resendAfterSeconds || 60);
       setStep("otp");
@@ -150,6 +180,8 @@ export function PhoneAuth() {
     setMode(nextMode);
     setStep("phone");
     setOtp(["", "", "", "", "", ""]);
+    setPin("");
+    setConfirmPin("");
     setError("");
     setAccountNotFound(false);
   }
@@ -159,14 +191,21 @@ export function PhoneAuth() {
     setError("");
 
     try {
-      const response = await verifyOtp(phone, code, network || "MTN", mode);
+      const response = await verifyOtp(
+        phone,
+        code,
+        network || "MTN",
+        mode,
+        pin,
+        fullName.trim(),
+      );
       setSession(
         response.token,
         response.user.phone,
         response.user.network,
         response.user.settings,
         response.user.isDemo,
-        fullName.trim(),
+        response.user.fullName || fullName.trim(),
       );
       setStep("success");
       setTimeout(() => router.push("/dashboard"), 700);
@@ -257,8 +296,8 @@ export function PhoneAuth() {
             </h1>
             <p className="mt-3 text-base text-[#6B7280] dark:text-[#D8E2DD]">
               {mode === "create"
-                ? "Just your name and Nigerian number."
-                : "Enter your Nigerian number to continue."}
+                ? "Add your name, Nigerian number, and a secure 4-digit PIN."
+                : "Enter your Nigerian number and PIN to continue."}
             </p>
 
             {mode === "create" ? (
@@ -336,16 +375,90 @@ export function PhoneAuth() {
               ) : null}
             </div>
 
+            <div className="mt-7">
+              <label
+                className="text-xs font-bold tracking-[0.14em] text-[#6B7280] uppercase dark:text-[#D8E2DD]"
+                htmlFor="pin"
+              >
+                {mode === "create" ? "Create 4-digit PIN" : "4-digit PIN"}
+              </label>
+              <div className="auth-input mt-3 flex h-14 items-center gap-3 rounded-[16px] border border-black/10 bg-white px-4 transition focus-within:border-[#008751] focus-within:ring-4 focus-within:ring-[#008751]/10 dark:border-white/[0.14] dark:bg-[#0D1A13] dark:focus-within:border-[#2EE68F]">
+                <ShieldCheck
+                  size={19}
+                  strokeWidth={1.5}
+                  className="text-[#8A8F98] dark:text-[#D8E2DD]"
+                />
+                <input
+                  id="pin"
+                  value={pin}
+                  onChange={(event) => {
+                    setPin(normalizePin(event.target.value));
+                    setError("");
+                  }}
+                  inputMode="numeric"
+                  type="password"
+                  className="min-w-0 flex-1 bg-transparent text-base font-semibold tracking-[0.32em] outline-none"
+                  placeholder="0000"
+                  maxLength={4}
+                />
+              </div>
+            </div>
+
+            {mode === "create" ? (
+              <div className="mt-7">
+                <label
+                  className="text-xs font-bold tracking-[0.14em] text-[#6B7280] uppercase dark:text-[#D8E2DD]"
+                  htmlFor="confirm-pin"
+                >
+                  Confirm PIN
+                </label>
+                <div
+                  className={cn(
+                    "auth-input mt-3 flex h-14 items-center gap-3 rounded-[16px] border bg-white px-4 transition focus-within:border-[#008751] focus-within:ring-4 focus-within:ring-[#008751]/10 dark:bg-[#0D1A13] dark:focus-within:border-[#2EE68F]",
+                    confirmPin && pin !== confirmPin
+                      ? "border-red-300 dark:border-red-400"
+                      : "border-black/10 dark:border-white/[0.14]",
+                  )}
+                >
+                  <ShieldCheck
+                    size={19}
+                    strokeWidth={1.5}
+                    className="text-[#8A8F98] dark:text-[#D8E2DD]"
+                  />
+                  <input
+                    id="confirm-pin"
+                    value={confirmPin}
+                    onChange={(event) => {
+                      setConfirmPin(normalizePin(event.target.value));
+                      setError("");
+                    }}
+                    inputMode="numeric"
+                    type="password"
+                    className="min-w-0 flex-1 bg-transparent text-base font-semibold tracking-[0.32em] outline-none"
+                    placeholder="0000"
+                    maxLength={4}
+                  />
+                </div>
+                {confirmPin && pin !== confirmPin ? (
+                  <p className="mt-3 text-sm font-semibold text-red-600">
+                    PINs do not match.
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+
             <Button
               className="mt-9 h-14 w-full rounded-[16px] bg-[#008751] text-base font-bold shadow-[0_18px_34px_rgba(0,135,81,0.18)]"
               onClick={submitPhone}
-              disabled={!phoneReady || loading}
+              disabled={(mode === "create" ? !createReady : !signinReady) || loading}
             >
               {loading
-                ? "Sending..."
+                ? mode === "create"
+                  ? "Sending..."
+                  : "Signing in..."
                 : mode === "create"
                   ? "Send verification code"
-                  : "Send sign-in code"}
+                  : "Sign in"}
             </Button>
 
             {error ? (

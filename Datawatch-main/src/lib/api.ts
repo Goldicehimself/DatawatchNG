@@ -3,6 +3,7 @@ import { http } from "@/lib/http";
 export type BackendUser = {
   _id: string;
   phone: string;
+  fullName?: string;
   network: string;
   isDemo: boolean;
   settings?: {
@@ -64,7 +65,7 @@ export type BackendChatMessage = {
   channel: "app" | "whatsapp" | "voice";
 };
 
-export async function requestOtp(phone: string, mode: "create" | "signin" = "create") {
+export async function requestOtp(phone: string, mode: "create" | "signin" = "create", pin?: string) {
   const { data } = await http.post<{
     success: boolean;
     phone: string;
@@ -73,7 +74,7 @@ export async function requestOtp(phone: string, mode: "create" | "signin" = "cre
     provider: string;
     demoCode?: string;
     resendAfterSeconds: number;
-  }>("/auth/request-otp", { phone, mode });
+  }>("/auth/request-otp", { phone, mode, pin });
   return data;
 }
 
@@ -82,12 +83,31 @@ export async function verifyOtp(
   code: string,
   network?: string,
   mode: "create" | "signin" = "create",
+  pin?: string,
+  fullName?: string,
 ) {
   const { data } = await http.post<{
     success: boolean;
     token: string;
     user: BackendUser;
-  }>("/auth/verify-otp", { phone, code, network, mode });
+  }>("/auth/verify-otp", { phone, code, network, mode, pin, fullName });
+  return data;
+}
+
+export async function loginWithPin(phone: string, pin: string) {
+  const { data } = await http.post<{
+    success: boolean;
+    token: string;
+    user: BackendUser;
+  }>("/auth/login-pin", { phone, pin });
+  return data;
+}
+
+export async function changePin(currentPin: string, newPin: string) {
+  const { data } = await http.patch<{ success: boolean; user: BackendUser }>("/settings/pin", {
+    currentPin,
+    newPin,
+  });
   return data;
 }
 

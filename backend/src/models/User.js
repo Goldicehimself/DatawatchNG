@@ -3,8 +3,11 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema(
   {
     phone: { type: String, required: true, unique: true, index: true },
+    fullName: { type: String, trim: true, maxlength: 120 },
     country: { type: String, default: "NG" },
     network: { type: String, enum: ["MTN", "Airtel", "Glo", "9mobile", "unknown"], default: "unknown" },
+    pinHash: String,
+    pinSalt: String,
     isVerified: { type: Boolean, default: false },
     isDemo: { type: Boolean, default: false },
     onboardingCompletedAt: Date,
@@ -22,5 +25,14 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+function hidePrivateFields(_doc, ret) {
+  delete ret.pinHash;
+  delete ret.pinSalt;
+  return ret;
+}
+
+userSchema.set("toJSON", { transform: hidePrivateFields });
+userSchema.set("toObject", { transform: hidePrivateFields });
 
 export default mongoose.model("User", userSchema);

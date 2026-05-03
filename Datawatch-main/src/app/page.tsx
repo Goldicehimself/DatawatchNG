@@ -199,23 +199,25 @@ export default function LandingPage() {
           <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">
             Three steps. Under a minute.
           </h2>
-          <div className="hide-scrollbar -mx-5 mt-5 flex gap-4 overflow-x-auto px-5 pb-3">
-            {[
-              ["Step 01", "Enter your number", "Just your Nigerian mobile number - no password."],
-              ["Step 02", "Verify OTP", "Secure 6-digit verification in seconds."],
-              ["Step 03", "Start tracking instantly", "Your data activity becomes visible in real-time."],
-            ].map(([step, title, body]) => (
-              <div
-                key={step}
-                className="landing-card min-w-[224px] rounded-[18px] bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)]"
-              >
-                <p className="text-[10px] font-black tracking-[0.2em] text-[#008751] uppercase">
-                  {step}
-                </p>
-                <h3 className="mt-4 text-base font-black">{title}</h3>
-                <p className="mt-2 text-xs leading-5 text-[#6B7280]">{body}</p>
-              </div>
-            ))}
+          <div className="landing-scroll-edge -mx-5 mt-5">
+            <div className="landing-horizontal-scroll hide-scrollbar flex gap-4 overflow-x-auto px-5 pb-3">
+              {[
+                ["Step 01", "Enter your details", "Add your name and Nigerian mobile number."],
+                ["Step 02", "Create your PIN", "Choose a secure 4-digit PIN for fast sign in."],
+                ["Step 03", "Confirm with OTP", "Verify once, then start tracking instantly."],
+              ].map(([step, title, body]) => (
+                <div
+                  key={step}
+                  className="landing-card landing-scroll-item min-w-[224px] rounded-[18px] bg-white p-5 shadow-[0_16px_40px_rgba(15,23,42,0.06)]"
+                >
+                  <p className="text-[10px] font-black tracking-[0.2em] text-[#008751] uppercase">
+                    {step}
+                  </p>
+                  <h3 className="mt-4 text-base font-black">{title}</h3>
+                  <p className="mt-2 text-xs leading-5 text-[#6B7280]">{body}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -226,23 +228,25 @@ export default function LandingPage() {
           <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">
             What you can do in DataWatch
           </h2>
-          <div className="hide-scrollbar -mx-5 mt-5 flex gap-3 overflow-x-auto px-5 pb-3">
-            {[
-              ["Check Usage", Radar],
-              ["Detect Charges", Search],
-              ["Scan Subscriptions", WalletCards],
-              ["Ask Watcher", Bot],
-            ].map(([label, Icon]) => (
-              <div
-                key={String(label)}
-                className="landing-card flex shrink-0 items-center gap-3 rounded-full bg-white px-5 py-3 text-sm font-bold shadow-sm"
-              >
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#008751]/10 text-[#008751]">
-                  <Icon size={15} strokeWidth={1.7} />
-                </span>
-                {String(label)}
-              </div>
-            ))}
+          <div className="landing-scroll-edge -mx-5 mt-5">
+            <div className="landing-horizontal-scroll hide-scrollbar flex gap-3 overflow-x-auto px-5 pb-3">
+              {[
+                ["Check Usage", Radar],
+                ["Detect Charges", Search],
+                ["Scan Subscriptions", WalletCards],
+                ["Ask Watcher", Bot],
+              ].map(([label, Icon]) => (
+                <div
+                  key={String(label)}
+                  className="landing-card landing-scroll-item flex shrink-0 items-center gap-3 rounded-full bg-white px-5 py-3 text-sm font-bold shadow-sm"
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#008751]/10 text-[#008751]">
+                    <Icon size={15} strokeWidth={1.7} />
+                  </span>
+                  {String(label)}
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -349,31 +353,31 @@ export default function LandingPage() {
           <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">
             Chat with Watcher on WhatsApp
           </h2>
-          <div className="landing-card mt-5 rounded-[24px] bg-white p-4 shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
-            <div className="overflow-hidden rounded-[18px] bg-[#EDE3D8]">
-              <div className="flex items-center gap-3 bg-[#00755A] p-4 text-white">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#008751]">
+          <div className="landing-card mt-5 rounded-[24px] border border-black/[0.06] bg-white p-4 shadow-[0_22px_58px_rgba(15,23,42,0.11)]">
+            <div className="overflow-hidden rounded-[18px] border border-black/[0.08] bg-[#F3F0EA]">
+              <div className="flex items-center gap-3 bg-[#075E54] p-4 text-white shadow-[0_8px_22px_rgba(7,94,84,0.18)]">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#075E54] shadow-sm">
                   <MessageCircle size={18} strokeWidth={1.7} />
                 </span>
                 <div>
                   <p className="text-sm font-black">Watcher - DataWatch NG</p>
-                  <p className="text-xs text-white/70">online</p>
+                  <p className="text-xs font-semibold text-white/80">online</p>
                 </div>
               </div>
-              <div className="space-y-3 p-4 text-xs">
-                <p className="max-w-[78%] rounded-[16px] bg-white p-3">
+              <div className="space-y-3 bg-[linear-gradient(135deg,rgba(255,255,255,0.62),rgba(230,221,212,0.52))] p-4 text-xs font-medium text-[#111827]">
+                <p className="max-w-[78%] rounded-[16px] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.08)]">
                   Hi Tunde. Your MTN line used 2.4GB today.
                 </p>
-                <p className="ml-auto max-w-[70%] rounded-[16px] bg-[#D9F8C5] p-3">
+                <p className="ml-auto max-w-[70%] rounded-[16px] bg-[#DCF8C6] p-3 shadow-[0_6px_14px_rgba(15,23,42,0.08)]">
                   Wetin chop am?
                 </p>
-                <p className="max-w-[82%] rounded-[16px] bg-white p-3">
+                <p className="max-w-[82%] rounded-[16px] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.08)]">
                   YouTube 1.2GB, Instagram 480MB, Background 320MB.
                 </p>
-                <p className="ml-auto max-w-[70%] rounded-[16px] bg-[#D9F8C5] p-3">
+                <p className="ml-auto max-w-[70%] rounded-[16px] bg-[#DCF8C6] p-3 shadow-[0_6px_14px_rgba(15,23,42,0.08)]">
                   Any wahala?
                 </p>
-                <p className="max-w-[82%] rounded-[16px] bg-white p-3">
+                <p className="max-w-[82%] rounded-[16px] bg-white p-3 shadow-[0_6px_14px_rgba(15,23,42,0.08)]">
                   Yes, N475 charged by Beatz Africa. You no subscribe. Reply
                   STOP to cancel.
                 </p>

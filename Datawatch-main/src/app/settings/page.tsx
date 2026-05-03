@@ -1,7 +1,7 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { Bell, Camera, ChevronRight, Monitor, Moon, Pencil, Shield, Sun, User, Wifi } from "lucide-react";
+import { Bell, Camera, ChevronRight, KeyRound, Monitor, Moon, Pencil, Shield, Sun, User, Wifi } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
@@ -9,7 +9,7 @@ import { useState } from "react";
 import { AppShell } from "@/components/layout/app-shell";
 import { ProductCard } from "@/components/product/product-card";
 import { Button } from "@/components/ui/button";
-import { updateSettings } from "@/lib/api";
+import { changePin, updateSettings } from "@/lib/api";
 import { useAppStore } from "@/lib/app-store";
 import { cn } from "@/lib/utils";
 
@@ -104,6 +104,11 @@ export default function SettingsPage() {
   const router = useRouter();
   const { setTheme, theme } = useTheme();
   const [alertsEnabled, setAlertsEnabled] = useState(true);
+  const [currentPin, setCurrentPin] = useState("");
+  const [newPin, setNewPin] = useState("");
+  const [confirmNewPin, setConfirmNewPin] = useState("");
+  const [pinMessage, setPinMessage] = useState("");
+  const [pinError, setPinError] = useState("");
   const fullName = useAppStore((state) => state.fullName);
   const phoneNumber = useAppStore((state) => state.phoneNumber);
   const networkProvider = useAppStore((state) => state.networkProvider);
@@ -117,6 +122,21 @@ export default function SettingsPage() {
   const logout = useAppStore((state) => state.logout);
   const settingsMutation = useMutation({
     mutationFn: updateSettings,
+  });
+  const pinMutation = useMutation({
+    mutationFn: ({ currentPin, newPin }: { currentPin: string; newPin: string }) =>
+      changePin(currentPin, newPin),
+    onSuccess: () => {
+      setCurrentPin("");
+      setNewPin("");
+      setConfirmNewPin("");
+      setPinError("");
+      setPinMessage("PIN changed successfully.");
+    },
+    onError: (error) => {
+      setPinMessage("");
+      setPinError(error instanceof Error ? error.message : "Unable to change PIN.");
+    },
   });
   const displayName = fullName || "DataWatch User";
   const activeNetwork = networkProvider || "Network";
@@ -151,6 +171,27 @@ export default function SettingsPage() {
   function signOut() {
     logout();
     router.push("/auth");
+  }
+
+  function normalizePin(value: string) {
+    return value.replace(/\D/g, "").slice(0, 4);
+  }
+
+  function submitPinChange() {
+    setPinMessage("");
+    setPinError("");
+
+    if (!/^\d{4}$/.test(currentPin) || !/^\d{4}$/.test(newPin)) {
+      setPinError("Enter a valid 4-digit current PIN and new PIN.");
+      return;
+    }
+
+    if (newPin !== confirmNewPin) {
+      setPinError("New PINs do not match.");
+      return;
+    }
+
+    pinMutation.mutate({ currentPin, newPin });
   }
 
   return (
@@ -280,6 +321,79 @@ export default function SettingsPage() {
           title="Pidgin responses"
           trailing={<Toggle enabled={pidginResponses} onChange={updatePidginResponses} />}
         />
+      </ProductCard>
+
+      <h2 className="mt-6 text-sm font-bold tracking-[0.14em] text-[#6B7280] uppercase dark:text-[#A8B3AD]">
+        Security
+      </h2>
+      <ProductCard className="mt-4 p-4">
+        <div className="flex items-center gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[15px] bg-black/[0.04] text-[#0A0A0A] dark:bg-white/[0.08] dark:text-[#F3F7F4]">
+            <KeyRound size={20} strokeWidth={1.5} />
+          </span>
+          <div>
+            <p className="text-[15px] font-semibold">Change PIN</p>
+            <p className="mt-1 text-sm text-[#6B7280] dark:text-[#A8B3AD]">
+              Update the 4-digit PIN used for sign in.
+            </p>
+          </div>
+        </div>
+        <div className="mt-5 grid gap-3">
+          <input
+            value={currentPin}
+            onChange={(event) => {
+              setCurrentPin(normalizePin(event.target.value));
+              setPinError("");
+              setPinMessage("");
+            }}
+            inputMode="numeric"
+            type="password"
+            placeholder="Current PIN"
+            className="h-12 rounded-[14px] border border-black/10 bg-white px-4 text-sm font-semibold tracking-[0.24em] outline-none transition focus:border-[#008751] focus:ring-4 focus:ring-[#008751]/10 dark:border-white/[0.14] dark:bg-[#0D1A13]"
+            maxLength={4}
+          />
+          <input
+            value={newPin}
+            onChange={(event) => {
+              setNewPin(normalizePin(event.target.value));
+              setPinError("");
+              setPinMessage("");
+            }}
+            inputMode="numeric"
+            type="password"
+            placeholder="New PIN"
+            className="h-12 rounded-[14px] border border-black/10 bg-white px-4 text-sm font-semibold tracking-[0.24em] outline-none transition focus:border-[#008751] focus:ring-4 focus:ring-[#008751]/10 dark:border-white/[0.14] dark:bg-[#0D1A13]"
+            maxLength={4}
+          />
+          <input
+            value={confirmNewPin}
+            onChange={(event) => {
+              setConfirmNewPin(normalizePin(event.target.value));
+              setPinError("");
+              setPinMessage("");
+            }}
+            inputMode="numeric"
+            type="password"
+            placeholder="Confirm new PIN"
+            className="h-12 rounded-[14px] border border-black/10 bg-white px-4 text-sm font-semibold tracking-[0.24em] outline-none transition focus:border-[#008751] focus:ring-4 focus:ring-[#008751]/10 dark:border-white/[0.14] dark:bg-[#0D1A13]"
+            maxLength={4}
+          />
+        </div>
+        {pinError ? (
+          <p className="mt-3 text-sm font-semibold text-red-600">{pinError}</p>
+        ) : null}
+        {pinMessage ? (
+          <p className="mt-3 text-sm font-semibold text-[#008751] dark:text-[#2EE68F]">
+            {pinMessage}
+          </p>
+        ) : null}
+        <Button
+          className="mt-4 h-12 w-full rounded-[14px]"
+          onClick={submitPinChange}
+          disabled={pinMutation.isPending}
+        >
+          {pinMutation.isPending ? "Changing..." : "Change PIN"}
+        </Button>
       </ProductCard>
 
       <Button

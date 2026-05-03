@@ -8,7 +8,12 @@ import { signSession } from "../utils/token.js";
 
 export const requestOtp = asyncHandler(async (req, res) => {
   const phone = normalizeNigerianPhone(req.body.phone);
-  const mode = req.body.mode === "signin" ? "signin" : "create";
+  const mode =
+    req.body.mode === "setup-pin"
+      ? "setup-pin"
+      : req.body.mode === "signin"
+        ? "signin"
+        : "create";
 
   if (!phone) {
     throw httpError(400, "Enter a valid Nigerian phone number");
@@ -25,6 +30,20 @@ export const requestOtp = asyncHandler(async (req, res) => {
 
     if (existingUser) {
       throw httpError(409, "An account already exists for this phone number. Sign in instead.");
+    }
+  }
+
+  if (mode === "setup-pin") {
+    assertValidPin(req.body.pin);
+
+    const existingUser = await User.findOne({ phone });
+
+    if (!existingUser) {
+      throw httpError(404, "No account found for this phone number. Create an account first.");
+    }
+
+    if (existingUser.pinHash && existingUser.pinSalt) {
+      throw httpError(409, "This account already has a PIN. Sign in instead.");
     }
   }
 
@@ -45,7 +64,12 @@ export const requestOtp = asyncHandler(async (req, res) => {
 export const verifyOtpAndLogin = asyncHandler(async (req, res) => {
   const phone = normalizeNigerianPhone(req.body.phone);
   const { code, network } = req.body;
-  const mode = req.body.mode === "signin" ? "signin" : "create";
+  const mode =
+    req.body.mode === "setup-pin"
+      ? "setup-pin"
+      : req.body.mode === "signin"
+        ? "signin"
+        : "create";
 
   if (!phone || !code) {
     throw httpError(400, "Phone and OTP code are required");
@@ -66,6 +90,18 @@ export const verifyOtpAndLogin = asyncHandler(async (req, res) => {
 
     if (existingUser) {
       throw httpError(409, "An account already exists for this phone number. Sign in instead.");
+    }
+  }
+
+  if (mode === "setup-pin") {
+    assertValidPin(req.body.pin);
+
+    if (!existingUser) {
+      throw httpError(404, "No account found for this phone number. Create an account first.");
+    }
+
+    if (existingUser.pinHash && existingUser.pinSalt) {
+      throw httpError(409, "This account already has a PIN. Sign in instead.");
     }
   }
 
@@ -95,6 +131,11 @@ export const verifyOtpAndLogin = asyncHandler(async (req, res) => {
   if (existingUser) {
     existingUser.network = network || existingUser.network || detectedNetwork;
     existingUser.isVerified = true;
+    if (mode === "setup-pin") {
+      const setupCredential = await hashPin(req.body.pin);
+      existingUser.pinHash = setupCredential.pinHash;
+      existingUser.pinSalt = setupCredential.pinSalt;
+    }
     await existingUser.save();
   }
 
@@ -119,6 +160,10 @@ export const loginWithPin = asyncHandler(async (req, res) => {
 
   if (!user) {
     throw httpError(404, "No account found for this phone number. Create an account first.");
+  }
+
+  if (!user.pinHash || !user.pinSalt) {
+    throw httpError(409, "This account needs a PIN. Create one to continue.");
   }
 
   const valid = await verifyPin(pin, user.pinHash, user.pinSalt);

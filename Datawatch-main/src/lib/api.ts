@@ -65,11 +65,13 @@ export type BackendChatMessage = {
   channel: "app" | "whatsapp" | "voice";
 };
 
-export async function requestOtp(phone: string, mode: "create" | "signin" = "create", pin?: string) {
+export type AuthMode = "create" | "signin" | "setup-pin";
+
+export async function requestOtp(phone: string, mode: AuthMode = "create", pin?: string) {
   const { data } = await http.post<{
     success: boolean;
     phone: string;
-    mode: "create" | "signin";
+    mode: AuthMode;
     network: string;
     provider: string;
     demoCode?: string;
@@ -82,7 +84,7 @@ export async function verifyOtp(
   phone: string,
   code: string,
   network?: string,
-  mode: "create" | "signin" = "create",
+  mode: AuthMode = "create",
   pin?: string,
   fullName?: string,
 ) {

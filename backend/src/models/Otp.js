@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const otpSchema = new mongoose.Schema(
   {
     phone: { type: String, required: true, index: true },
-    authMode: { type: String, enum: ["create", "signin"], default: "create" },
+    authMode: { type: String, enum: ["create", "signin", "setup-pin"], default: "create" },
     provider: { type: String, enum: ["local", "twilio", "sendchamp"], default: "local" },
     codeHash: String,
     providerReference: String,

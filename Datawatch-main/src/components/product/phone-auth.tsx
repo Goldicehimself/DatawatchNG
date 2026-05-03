@@ -114,6 +114,7 @@ export function PhoneAuth({
   const [demoCode, setDemoCode] = useState("");
   const [error, setError] = useState("");
   const [accountNotFound, setAccountNotFound] = useState(false);
+  const [legacyPinSetup, setLegacyPinSetup] = useState(false);
   const [loading, setLoading] = useState(false);
   const inputs = useRef<Array<HTMLInputElement | null>>([]);
 
@@ -124,7 +125,8 @@ export function PhoneAuth({
   const pinReady = /^\d{4}$/.test(pin);
   const createReady =
     phoneReady && fullName.trim().length >= 2 && pinReady && pin === confirmPin;
-  const signinReady = phoneReady && pinReady;
+  const setupPinReady = phoneReady && pinReady && pin === confirmPin;
+  const signinReady = legacyPinSetup ? setupPinReady : phoneReady && pinReady;
 
   function normalizePin(value: string) {
     return value.replace(/\D/g, "").slice(0, 4);
@@ -136,7 +138,7 @@ export function PhoneAuth({
     setAccountNotFound(false);
 
     try {
-      if (mode === "signin") {
+      if (mode === "signin" && !legacyPinSetup) {
         const response = await loginWithPin(phone, pin);
         setSession(
           response.token,
@@ -156,7 +158,7 @@ export function PhoneAuth({
         return;
       }
 
-      const response = await requestOtp(phone, mode, pin);
+      const response = await requestOtp(phone, legacyPinSetup ? "setup-pin" : mode, pin);
       setDemoCode(response.demoCode || "");
       setSeconds(response.resendAfterSeconds || 60);
       setStep("otp");
@@ -171,6 +173,13 @@ export function PhoneAuth({
           (message.toLowerCase().includes("no account found") ||
             message.toLowerCase().includes("create an account")),
       );
+      if (mode === "signin" && message.toLowerCase().includes("needs a pin")) {
+        setLegacyPinSetup(true);
+        setPin("");
+        setConfirmPin("");
+        setError("Create a 4-digit PIN to finish updating your account.");
+        return;
+      }
       setError(message);
     } finally {
       setLoading(false);
@@ -184,6 +193,7 @@ export function PhoneAuth({
     setOtp(["", "", "", "", "", ""]);
     setPin("");
     setConfirmPin("");
+    setLegacyPinSetup(false);
     setError("");
     setAccountNotFound(false);
   }
@@ -197,7 +207,7 @@ export function PhoneAuth({
         phone,
         code,
         network || "MTN",
-        mode,
+        legacyPinSetup ? "setup-pin" : mode,
         pin,
         fullName.trim(),
       );
@@ -294,12 +304,18 @@ export function PhoneAuth({
         {step === "phone" ? (
           <section className="mt-10">
             <h1 className="text-[28px] leading-tight font-bold tracking-[-0.03em]">
-              {mode === "create" ? "Create your account" : "Sign in"}
+              {mode === "create"
+                ? "Create your account"
+                : legacyPinSetup
+                  ? "Create your PIN"
+                  : "Sign in"}
             </h1>
             <p className="mt-3 text-base text-[#6B7280] dark:text-[#D8E2DD]">
               {mode === "create"
                 ? "Add your name, Nigerian number, and a secure 4-digit PIN."
-                : "Enter your Nigerian number and PIN to continue."}
+                : legacyPinSetup
+                  ? "Your account needs a 4-digit PIN before you can sign in."
+                  : "Enter your Nigerian number and PIN to continue."}
             </p>
 
             {mode === "create" ? (
@@ -353,6 +369,7 @@ export function PhoneAuth({
                       setLocalPhone(normalizeLocalPhone(event.target.value));
                       setError("");
                       setAccountNotFound(false);
+                      setLegacyPinSetup(false);
                     }}
                     inputMode="tel"
                     className="min-w-0 flex-1 bg-transparent text-base font-semibold tracking-wide outline-none"
@@ -382,7 +399,7 @@ export function PhoneAuth({
                 className="text-xs font-bold tracking-[0.14em] text-[#6B7280] uppercase dark:text-[#D8E2DD]"
                 htmlFor="pin"
               >
-                {mode === "create" ? "Create 4-digit PIN" : "4-digit PIN"}
+                {mode === "create" || legacyPinSetup ? "Create 4-digit PIN" : "4-digit PIN"}
               </label>
               <div className="auth-input mt-3 flex h-14 items-center gap-3 rounded-[16px] border border-black/10 bg-white px-4 transition focus-within:border-[#008751] focus-within:ring-4 focus-within:ring-[#008751]/10 dark:border-white/[0.14] dark:bg-[#0D1A13] dark:focus-within:border-[#2EE68F]">
                 <ShieldCheck
@@ -406,7 +423,23 @@ export function PhoneAuth({
               </div>
             </div>
 
-            {mode === "create" ? (
+            {mode === "signin" && !legacyPinSetup ? (
+              <button
+                type="button"
+                className="mt-3 text-left text-sm font-bold text-[#008751] disabled:text-[#8A8F98] dark:text-[#2EE68F] dark:disabled:text-[#7F8B85]"
+                disabled={!phoneReady || loading}
+                onClick={() => {
+                  setPin("");
+                  setConfirmPin("");
+                  setError("Create a 4-digit PIN to finish updating your account.");
+                  setLegacyPinSetup(true);
+                }}
+              >
+                Old account without a PIN? Set one up
+              </button>
+            ) : null}
+
+            {mode === "create" || legacyPinSetup ? (
               <div className="mt-7">
                 <label
                   className="text-xs font-bold tracking-[0.14em] text-[#6B7280] uppercase dark:text-[#D8E2DD]"
@@ -455,10 +488,10 @@ export function PhoneAuth({
               disabled={(mode === "create" ? !createReady : !signinReady) || loading}
             >
               {loading
-                ? mode === "create"
+                ? mode === "create" || legacyPinSetup
                   ? "Sending..."
                   : "Signing in..."
-                : mode === "create"
+                : mode === "create" || legacyPinSetup
                   ? "Send verification code"
                   : "Sign in"}
             </Button>
